@@ -1,0 +1,13 @@
+# Winny
+
+###
+# @name Upload Theme
+POST localhost:3000/theme/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+Authorization: Bearer 2cYk@dXT!ZjXagF_-h6x
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="Bracula_Theme_-_Winston.zip"
+
+< /Users/daniel/Downloads/Bracula_Theme_-_Winston.zip
+--WebAppBoundary

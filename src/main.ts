@@ -1,9 +1,9 @@
 import { ApplicationCommand, Client, Collection, GatewayIntentBits, Partials } from "discord.js";
-import {loadAllCommands} from "./commandHandler/commands";
+import {loadAllCommands} from "./userInteractionHandlers/commandHandler/commands";
 import {loadEvents} from "./eventHandler/events";
 import {expressServer} from "./webserver";
 import {clearCache} from "./globals/utils";
-import {ThemeTags} from "./databaseHandler/saveToDB";
+import {ThemeTags} from "./databaseHandler/databaseHandler";
 import dotenv from "dotenv";
 
 dotenv.config({ path: "./.env" });

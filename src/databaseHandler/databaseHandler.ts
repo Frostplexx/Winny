@@ -1,6 +1,6 @@
 import {MetadataColor, ThemeMetadata} from "../themesHandler/handleUploaded";
 import * as Sequelize from "sequelize";
-import {ApprovalStates} from "../themesHandler/approvalHanlder";
+import {ApprovalStates} from "../themesHandler/approvalHandler";
 import * as trace_events from "trace_events";
 import {Model, where} from "sequelize";
 
@@ -23,7 +23,7 @@ const sequelize = new Sequelize.Sequelize(
  * @param {ThemeMetadata} metadata - The metadata object for the theme.
  * @return {void}
  */
-export async function saveToDB(metadata: ThemeMetadata): Promise<boolean> {
+export async function databaseHandler(metadata: ThemeMetadata): Promise<boolean> {
 	let saveableMetaData = {
 		file_name: metadata.file_name,
 		file_id: metadata.file_id,
@@ -187,12 +187,12 @@ export const ThemeTags = sequelize.define("themes", {
 	theme_description: Sequelize.TEXT,
 	message_id: {
 		type: Sequelize.STRING,
-		allowNull: false,
+		allowNull: true,
 		unique: true
 	},
 	attachment_url: {
 		type: Sequelize.STRING,
-		allowNull: false
+		allowNull: true
 	},
 	approval_state: Sequelize.STRING,
 	color: Sequelize.STRING,

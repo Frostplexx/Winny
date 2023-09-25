@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { SlashCommandBuilder} from 'discord.js';
 import SlashCommand from "../commandTypes/slashCommand";
-import {channelsJSON} from "../../globals/constants";
+import {channelsJSON} from "../../../globals/constants";
 
 export default new SlashCommand({
 	data: new SlashCommandBuilder()

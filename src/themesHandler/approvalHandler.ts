@@ -1,0 +1,69 @@
+import {ThemeMetadata} from "./handleUploaded";
+import {clientUtils} from "../globals/utils";
+import {generateEmbed, uploadThemeToDiscord} from "./discordUploader";
+import {ButtonBuilder, ButtonInteraction, ButtonStyle, User} from "discord.js";
+import {SimpleButton} from "../userInteractionHandlers/buttonHandler/simpleButton";
+import {ActionRowBuilder} from "@discordjs/builders";
+import {Button} from "../userInteractionHandlers/buttonHandler/button";
+import {disableMsgButtonIndex} from "../userInteractionHandlers/buttonHandler/buttons.util";
+import {updateThemeWithID} from "../databaseHandler/databaseHandler";
+
+export async function initiateApproval(metadata: ThemeMetadata) {
+	let user = await clientUtils.findUser("336806197158215682")
+
+	const message = "New Theme to Approve: "
+	const embed = generateEmbed(metadata)
+	const yesButton =
+		new SimpleButton(approveTheme)
+			.setLabel("Approve")
+			.setEmoji("✔️")
+			.setStyle(ButtonStyle.Primary)
+			.register(metadata)
+	const noButton =
+		new SimpleButton(denyTheme)
+			.setLabel("Deny")
+			.setEmoji("✖️")
+			.setStyle(ButtonStyle.Danger)
+			.register(metadata)
+	const row =
+		new ActionRowBuilder()
+			.addComponents([
+				yesButton,
+				noButton
+			])
+	await user.send({content: message, embeds: [embed], components: [row as any]})
+}
+
+async function approveTheme(interaction: ButtonInteraction, btnEvent: SimpleButton, data: any) {
+	console.log("Approve Theme")
+	console.log(data)
+	await interaction.deferUpdate()
+	await interaction.editReply({content: "Theme approved", components: []})
+	data = await uploadThemeToDiscord(data)
+	if (!data) {return}
+	await updateThemeWithID(data.file_id, {
+		message_id: data.message_id,
+		attachment_url: data.attachment_url,
+		approval_state: ApprovalStates.ACCEPTED
+	})
+}
+
+async function denyTheme(interaction: ButtonInteraction, btnEvent: SimpleButton, data: any) {
+	console.log("Deny Theme")
+	await interaction.deferUpdate()
+	await interaction.editReply({content: "Theme denied", components: []})
+	await updateThemeWithID(data.file_id, {
+		approval_state: ApprovalStates.DENIED
+	})
+}
+
+/**
+ * Enum representing the possible states of an approval.
+ * @enum {string}
+ */
+export enum ApprovalStates {
+	PENDING = 'pending', // or whatever initial state
+	ACCEPTED = 'accepted',
+	DENIED = 'denied'
+	// ... other states ...
+}

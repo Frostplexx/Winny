@@ -1,6 +1,6 @@
 import path from "path";
 import { REST, Routes } from "discord.js";
-import {filewalker} from "../utils";
+import {filewalker} from "../../utils";
 const DeployableCommands: any = [];
 
 // ------- Disable commands -------

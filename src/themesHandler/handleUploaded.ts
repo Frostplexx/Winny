@@ -3,9 +3,9 @@ import fs from 'fs';
 import {cacheFolder} from "../globals/constants";
 import path from "path";
 import * as util from "util";
-import {ApprovalStates} from "./approvalHanlder";
+import {ApprovalStates, initiateApproval} from "./approvalHandler";
 import {uploadThemeToDiscord} from "./discordUploader";
-import {saveToDB} from "../databaseHandler/saveToDB";
+import {databaseHandler} from "../databaseHandler/databaseHandler";
 
 /**
  * Handles uploaded file.
@@ -13,14 +13,15 @@ import {saveToDB} from "../databaseHandler/saveToDB";
  * @param {string} filename - The name of the uploaded file.
  * @returns {Promise<void>} - A promise that resolves once the file is handled.
  */
-export const handleUploaded = async (filename: string) => {
+export const handleUploaded = async (filename: string): Promise<void> => {
 	console.log(`Handling uploaded file: ${filename}`);
 	let foldername = filename.replace(".zip", "")
 	//get the file metadata
 	var metadata = await extractThemeMetadata(filename, `${cacheFolder}/${foldername}`)
-	metadata = await uploadThemeToDiscord(metadata)
 	if (!metadata) {return}
-	saveToDB(metadata)
+	await databaseHandler(metadata)
+	await initiateApproval(metadata)
+	//metadata = await uploadThemeToDiscord(metadata)
 }
 
 /**

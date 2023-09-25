@@ -8,6 +8,6 @@ export default new SlashCommand({
 		.setDescription('help command'),
 	//_________COMMAND____________
 	async execute(interaction): Promise<void> {
-		await interaction.reply('`/add-legacy-point` to add points. `/subtract-legacy-points` to subtract them. `/points` to see how many points you have')
+		await interaction.reply("Not implemented")
 	},
 })

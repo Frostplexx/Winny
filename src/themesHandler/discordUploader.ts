@@ -67,7 +67,7 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
  * @param {ThemeMetadata} metadata - The metadata object containing information about the theme.
  * @return {EmbedBuilder} - The generated embed object.
  */
-function generateEmbed(metadata: ThemeMetadata): EmbedBuilder {
+export function generateEmbed(metadata: ThemeMetadata): EmbedBuilder {
 	// inside a command, event listener, etc.
 	const colorInt = parseInt(metadata.color.hex.replace('#',''), 16);
 	let symbol ="https://github.com/andrewtavis/sf-symbols-online/blob/master/glyphs/" + metadata.icon + ".png"

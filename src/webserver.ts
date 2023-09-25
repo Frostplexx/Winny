@@ -11,7 +11,7 @@ import {
     getThemeFromID, getThemeStatus,
     SavableMetadata,
     updateThemeWithID
-} from "./databaseHandler/saveToDB";
+} from "./databaseHandler/databaseHandler";
 import ws from "ws";
 import cors from "cors";
 

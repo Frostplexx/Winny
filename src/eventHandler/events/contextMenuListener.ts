@@ -1,6 +1,7 @@
 import { BaseInteraction, Events } from "discord.js";
-import { Event } from "../events";
 import SlashCommand from "../../userInteractionHandlers/commandHandler/commandTypes/slashCommand";
+import { Event } from "../events";
+import {ContextMenu} from "../../userInteractionHandlers/commandHandler/commandTypes/contextMenuCommand";
 import {client} from "../../main";
 
 export const event: Event = {
@@ -12,24 +13,24 @@ export const event: Event = {
 	//-> may be improved to make it clearer for more commands
 	async execute(interaction: BaseInteraction): Promise<void> {
 		// Dynamically handle slash commands
-		if (!interaction.isChatInputCommand()) return;
+		if (!interaction.isContextMenuCommand()) return;
 		if (!client.commands.has(interaction.commandName)) return;
 
 		try {
-			const command: SlashCommand = (await client.commands.get(
+			const command: ContextMenu = client.commands.get(
 				interaction.commandName
-			)) as unknown as SlashCommand;
+			) as unknown as ContextMenu;
 			await command.execute(interaction);
 		} catch (error) {
 			console.error(error);
 			try {
 				await interaction.reply({
-					content: "There was an error while executing this command!",
+					content: "There was an error while executing this context menu!",
 					ephemeral: true,
 				});
 			} catch (error) {
 				interaction.followUp({
-					content: "There was an error while executing this command!",
+					content: "There was an error while executing this context menu!",
 					ephemeral: true,
 				});
 			}

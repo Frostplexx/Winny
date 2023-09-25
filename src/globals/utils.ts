@@ -9,7 +9,7 @@ import {client} from "../main";
  * Clears the ./src/cache folder.
  */
 export function clearCache() {
-	const cacheFolderPath = path.join(__dirname, cacheFolder);
+	const cacheFolderPath = path.join(__dirname, "../." + cacheFolder);
 
 	fs.readdir(cacheFolderPath, (err, files) => {
 		if (err) {
@@ -37,7 +37,7 @@ export const clientUtils = {
 		try {
 			console.log(`Searching for ${guildId}`);
 
-			const guild = await client.guilds.cache.get(guildId);
+			const guild = client.guilds.cache.get(guildId);
 			return guild ? guild : await client.guilds.fetch(guildId);
 		} catch (error) {
 			console.log(error);

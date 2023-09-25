@@ -1,7 +1,6 @@
 import path from "path";
 import { REST, Routes } from "discord.js";
 import {filewalker} from "../utils";
-import {clientid, token} from "../main";
 const DeployableCommands: any = [];
 
 // ------- Disable commands -------
@@ -59,18 +58,20 @@ export function loadAllCommands(client: any, debug: boolean = false) {
 
 		//skip deployment if debug is true
 		if (!debug) {
-			const rest = new REST({ version: "10" }).setToken(token as string);
+			const rest = new REST({ version: "10" }).setToken(process.env.TOKEN as string);
+			if (process.env.CLIENT_ID) {
+				try {
+					console.log("Started refreshing application (/) commands.");
 
-			try {
-				console.log("Started refreshing application (/) commands.");
-
-				await rest.put(Routes.applicationCommands(clientid as string), {
-					body: DeployableCommands,
-				});
-				console.log("Successfully reloaded application (/) commands.");
-			} catch (error) {
-				console.error(error);
+					await rest.put(Routes.applicationCommands(process.env.CLIENT_ID), {
+						body: DeployableCommands,
+					});
+					console.log("Successfully reloaded application (/) commands.");
+				} catch (error) {
+					console.error(error);
+				}
 			}
+
 		}
 	});
 }

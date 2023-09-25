@@ -4,13 +4,9 @@ import {loadEvents} from "./eventHandler/events";
 import {expressServer} from "./webserver";
 import {clearCache} from "./globals/utils";
 import {ThemeTags} from "./databaseHandler/saveToDB";
+import dotenv from "dotenv";
 
-
-export const token = "MTE1NTc4NzgxNzMwMjExNDM0Ng.GuaG99.wx8B6nAw4wAiXk9qYzURlwCKEu9NELVXdd4Yuk";
-export const clientid = "1155787817302114346";
-
-const bearer_token = "2cYk@dXT!ZjXagF_-h6x";
-
+dotenv.config({ path: "./.env" });
 // Create a new client instance
 export const client = Object.assign(
 	new Client({
@@ -31,10 +27,10 @@ export const client = Object.assign(
 clearCache()
 ThemeTags.sync().then(() => {
 	loadAllCommands(client);
-	expressServer(bearer_token)
+	expressServer(process.env.BEARER!)
 
 
-	client.login(token).then(async () => {
+	client.login(process.env.TOKEN).then(async () => {
 		console.log("Logged in as " + client.user!.tag);
 		loadEvents(client);
 		client.user?.setPresence({
@@ -44,6 +40,3 @@ ThemeTags.sync().then(() => {
 
 	});
 })
-
-
-

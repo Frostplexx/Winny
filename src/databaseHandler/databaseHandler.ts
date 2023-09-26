@@ -3,6 +3,9 @@ import * as Sequelize from "sequelize";
 import {ApprovalStates} from "../themesHandler/approvalHandler";
 import * as trace_events from "trace_events";
 import {Model, where} from "sequelize";
+import {channelSafeFetchMessage, clientUtils, getHardcodedIDs, guildUtils} from "../globals/utils";
+import {client} from "../main";
+import {TextChannel} from "discord.js";
 
 const sequelize = new Sequelize.Sequelize(
 	"themes_database",
@@ -52,14 +55,19 @@ export async function databaseHandler(metadata: ThemeMetadata): Promise<boolean>
  *
  * @returns {Promise<Array<ThemeMetadata>>} - A promise that resolves to an array of theme metadata.
  */
-export async function getAllThemes() {
-	let themesTags = await ThemeTags.findAll()
+export async function getAllThemes(): Promise<Array<ThemeMetadata>> {
+	let themesTags = await ThemeTags.findAll({ where: { approval_state: "accepted"}})
 	let themes = []
 	for (const theme of themesTags) {
 		themes.push(<ThemeMetadata>themeFromTags(theme))
 	}
 
 	return themes
+}
+
+export async function getThemeByMessageID(messageID: string){
+	let themeTag = await ThemeTags.findOne({where: {message_id: messageID}});
+	return themeFromTags(themeTag)
 }
 
 /**
@@ -77,9 +85,20 @@ export async function getThemeFromID(id: string) {
  * Deletes a theme with the specified ID from the database.
  *
  * @param {string} id - The ID of the theme to delete.
+ * @param {string} messageID - The ID of the message to delete (optional).
  * @return {Promise<boolean>} - A Promise that resolves to true if the theme is successfully deleted, otherwise resolves to false.
  */
-export async function deleteThemeWithID(id: string): Promise<boolean> {
+export async function deleteThemeWithID(id: string, messageID: string | undefined = undefined): Promise<boolean> {
+	if (messageID){
+		let {channelID, guildID} = getHardcodedIDs()
+		let guild = await clientUtils.findGuild(guildID)
+		if (guild) {
+			let channel = await guildUtils.findChannel(guild, channelID)
+			if (channel) {
+				channelSafeFetchMessage(channel as TextChannel, messageID).then((m: any) => m?.delete());
+			}
+		}
+	}
 	try {
 		await ThemeTags.destroy({
 			where: {

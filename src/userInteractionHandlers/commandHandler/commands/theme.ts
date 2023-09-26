@@ -1,8 +1,5 @@
 import {ChatInputCommandInteraction, EmbedBuilder, Interaction, SlashCommandBuilder} from 'discord.js'
 import SlashCommand from "../commandTypes/slashCommand";
-import {clearCache} from "../../../globals/utils";
-import * as fs from 'fs'
-import {cacheFolder} from "../../../globals/constants";
 
 export default new SlashCommand({
 	//______SLASH COMMAND OPTIONS_________

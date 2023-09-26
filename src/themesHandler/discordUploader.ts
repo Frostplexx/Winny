@@ -1,19 +1,9 @@
 import fs from "fs";
 import path from "path";
 import {ThemeMetadata} from "./handleUploaded";
-import {clientUtils, guildUtils} from "../globals/utils";
+import {clientUtils, getHardcodedIDs, guildUtils} from "../globals/utils";
 import {AttachmentBuilder, EmbedBuilder, TextBasedChannel} from "discord.js";
 import {cacheFolder} from "../globals/constants";
-
-/**
- * Represents a guild channel.
- *
- * @interface Channels
- */
-interface Channels {
-	guildID: string,
-	channelID: string
-}
 
 /**
  * Uploads a theme to Discord.
@@ -26,14 +16,7 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 		return null;
 	}
 
-	const channelsPath = path.join(__dirname, '../channels.json');
-
-	// Reads the JSON file
-	const data = fs.readFileSync(channelsPath, 'utf-8');
-	const channels: Channels = JSON.parse(data);
-
-	const {guildID, channelID} = channels;
-	console.info(`Guild ID: ${guildID}, Channel ID: ${channelID}`);
+	const {guildID, channelID} = getHardcodedIDs();
 
 	let guild = await clientUtils.findGuild(guildID)
 	if (!guild) {return null}

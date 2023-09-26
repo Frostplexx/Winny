@@ -15,9 +15,9 @@ import {databaseHandler} from "../databaseHandler/databaseHandler";
  */
 export const handleUploaded = async (filename: string): Promise<void> => {
 	console.log(`Handling uploaded file: ${filename}`);
-	let foldername = filename.replace(".zip", "")
+	let folderName = filename.replace(".zip", "")
 	//get the file metadata
-	var metadata = await extractThemeMetadata(filename, `${cacheFolder}/${foldername}`)
+	var metadata = await extractThemeMetadata(filename, `${cacheFolder}/${folderName}`)
 	if (!metadata) {return}
 	await databaseHandler(metadata)
 	await initiateApproval(metadata)
@@ -57,7 +57,7 @@ async function extractThemeMetadata(filename: string, extractPath: string): Prom
 
 				metadata = {
 					file_name: filename,
-					file_id: filename.replace(".zip", "") || '',
+					file_id: jsonContent.id || '',
 					theme_name: jsonContent.metadata.name || '',
 					theme_author: jsonContent.metadata.author || '',
 					theme_description: jsonContent.description || '',

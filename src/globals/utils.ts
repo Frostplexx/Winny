@@ -26,6 +26,28 @@ export function clearCache() {
 	});
 }
 
+export function getHardcodedIDs() {
+	const channelsPath = path.join(__dirname, '../channels.json');
+
+	// Reads the JSON file
+	const data = fs.readFileSync(channelsPath, 'utf-8');
+	const channels: Channels = JSON.parse(data);
+
+	const {guildID, channelID} = channels;
+	console.info(`Guild ID: ${guildID}, Channel ID: ${channelID}`);
+	return {guildID, channelID};
+}
+
+/**
+ * Represents a guild channel.
+ *
+ * @interface Channels
+ */
+export interface Channels {
+	guildID: string,
+	channelID: string
+}
+
 //client related functions
 export const clientUtils = {
 	/**

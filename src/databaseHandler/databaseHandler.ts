@@ -149,7 +149,8 @@ function themeFromTags(tag: Model<any, any> | null): ThemeMetadata | undefined {
 		color: {
 			hex: tag?.get("color") as string,
 			alpha: tag?.get("alpha") as number,
-		} as MetadataColor
+		} as MetadataColor,
+		icon: tag.get("icon") as string
 	} as ThemeMetadata
 }
 

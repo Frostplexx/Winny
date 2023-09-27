@@ -1,11 +1,11 @@
 import {ApplicationCommandType, ContextMenuCommandBuilder} from "discord.js";
 import {ContextMenu} from "../commandTypes/contextMenuCommand";
-import {deleteThemeWithID, getThemeByMessageID} from "../../../databaseHandler/databaseHandler";
+import {deleteThemeWithID, getThemeByMessageID} from "../../../database/databaseHandler";
 
 export default new ContextMenu({
 	//______SLASH COMMAND OPTIONS_________
 	data: new ContextMenuCommandBuilder()
-		.setName("dev-delete-campaign")
+		.setName("delete-theme")
 		.setType(ApplicationCommandType.Message),
 	//_________COMMAND____________
 	async execute(interaction): Promise<void> {

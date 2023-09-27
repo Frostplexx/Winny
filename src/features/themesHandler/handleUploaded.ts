@@ -1,11 +1,12 @@
 import unzipper, {Open} from 'unzipper';
 import fs from 'fs';
-import {cacheFolder} from "../globals/constants";
+import {cacheFolder} from "../../globals/constants";
 import path from "path";
 import * as util from "util";
 import {ApprovalStates, initiateApproval} from "./approvalHandler";
 import {uploadThemeToDiscord} from "./discordUploader";
-import {databaseHandler} from "../databaseHandler/databaseHandler";
+import {databaseHandler} from "../../database/databaseHandler";
+import {WinstonThemePreview} from "../svgEditor";
 
 /**
  * Handles uploaded file.
@@ -54,7 +55,7 @@ async function extractThemeMetadata(filename: string, extractPath: string): Prom
 			const jsonContent = JSON.parse(data);
 
 			if (jsonContent && jsonContent.metadata) {
-
+				//TODO: Make this cleaner
 				metadata = {
 					file_name: filename,
 					file_id: jsonContent.id || '',
@@ -68,8 +69,30 @@ async function extractThemeMetadata(filename: string, extractPath: string): Prom
 						alpha: jsonContent.metadata.color.alpha,
 						hex: jsonContent.metadata.color.hex
 					} as MetadataColor,
-					icon: jsonContent.metadata.icon
-				};
+					icon: jsonContent.metadata.icon,
+					themeColorsLight: {
+						background: "#" + jsonContent.posts.bg.color._0.light.hex,
+						accentColor: "#" + jsonContent.general.accentColor.light.hex,
+						tabBarBackground: "#" + jsonContent.general.tabBarBG.color.light.hex,
+						subredditPillBackground: "#CCE4FF",
+						divider: jsonContent.lists.dividersColors.light.hex,
+						tabBarInactiveColor: "#A1A1A1",
+						tabBarInactiveTextColor: "#ADAEAE",
+						postTitleText:"#" + jsonContent.postLinks.theme.titleText.color.light.hex,
+						postBodyText: "#" + jsonContent.postLinks.theme.bodyText.color.light.hex
+					} as WinstonThemePreview,
+					themeColorsDark: {
+						background: "#" + jsonContent.posts.bg.color._0.dark.hex,
+						accentColor: "#" + jsonContent.general.accentColor.dark.hex,
+						tabBarBackground: jsonContent.general.tabBarBG.color.dark.hex == "#ffffff" ? "#000000" : "#" + jsonContent.general.tabBarBG.color.dark.hex,
+						subredditPillBackground: "#CCE4FF",
+						divider: jsonContent.lists.dividersColors.dark.hex,
+						tabBarInactiveColor: "#A1A1A1",
+						tabBarInactiveTextColor: "#ADAEAE",
+						postTitleText:"#" + jsonContent.postLinks.theme.titleText.color.dark.hex,
+						postBodyText: "#" + jsonContent.postLinks.theme.bodyText.color.dark.hex
+					} as WinstonThemePreview
+				} as ThemeMetadata;
 			} else {
 				console.error("Error parsing JSON");
 			}
@@ -104,9 +127,12 @@ export interface ThemeMetadata {
 	theme_description: string
 	message_id: string | undefined
 	attachment_url: string | undefined
+	thumbnails_urls: string[] | undefined
 	approval_state: ApprovalStates
 	color: MetadataColor
 	icon: string
+	themeColorsLight: WinstonThemePreview
+	themeColorsDark: WinstonThemePreview
 }
 
 /**

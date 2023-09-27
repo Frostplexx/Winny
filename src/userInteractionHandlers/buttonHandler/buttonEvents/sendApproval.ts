@@ -5,8 +5,8 @@ import { activeButtons, removeButton } from "../registerButtons";
 import {ButtonBuilder, ButtonInteraction, ButtonStyle, TextChannel} from "discord.js";
 import {resolveInteractionMessage} from "../../../globals/utils";
 import {ActionRowBuilder} from "@discordjs/builders";
-import {ApprovalButtons} from "../../../themesHandler/approvalHandler";
-import {ThemeMetadata} from "../../../themesHandler/handleUploaded";
+import {ApprovalButtons} from "../../../features/themesHandler/approvalHandler";
+import {ThemeMetadata} from "../../../features/themesHandler/handleUploaded";
 export const buttonEvent: ButtonEvent = {
 	name: "sendApproval",
 	execute: execute,

@@ -1,7 +1,7 @@
 import { SlashCommandBuilder} from 'discord.js'
 import SlashCommand from "../commandTypes/slashCommand";
-import {ThemeTags} from "../../../databaseHandler/databaseHandler";
-import {ApprovalStates} from "../../../themesHandler/approvalHandler";
+import {ThemeTags} from "../../../database/databaseHandler";
+import {ApprovalStates} from "../../../features/themesHandler/approvalHandler";
 
 export default new SlashCommand({
 	//______SLASH COMMAND OPTIONS_________

@@ -3,7 +3,7 @@ import express from "express";
 import multer, { StorageEngine } from 'multer';
 import path from "path";
 import {generateTimeBasedUUID} from "./globals/security";
-import {handleUploaded} from "./themesHandler/handleUploaded";
+import {handleUploaded} from "./features/themesHandler/handleUploaded";
 import {cacheFolder} from "./globals/constants";
 import {
     deleteThemeWithID,
@@ -11,7 +11,7 @@ import {
     getThemeFromID, getThemeStatus,
     SavableMetadata,
     updateThemeWithID
-} from "./databaseHandler/databaseHandler";
+} from "./database/databaseHandler";
 import ws from "ws";
 import cors from "cors";
 

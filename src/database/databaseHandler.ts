@@ -1,8 +1,8 @@
-import {MetadataColor, ThemeMetadata} from "../themesHandler/handleUploaded";
+import {MetadataColor, ThemeMetadata} from "../features/themesHandler/handleUploaded";
 import * as Sequelize from "sequelize";
-import {ApprovalStates} from "../themesHandler/approvalHandler";
+import {ApprovalStates} from "../features/themesHandler/approvalHandler";
 import * as trace_events from "trace_events";
-import {Model, where} from "sequelize";
+import {ARRAY, DataTypes, Model, STRING, where} from "sequelize";
 import {channelSafeFetchMessage, clientUtils, getHardcodedIDs, guildUtils} from "../globals/utils";
 import {client} from "../main";
 import {TextChannel} from "discord.js";
@@ -38,7 +38,8 @@ export async function databaseHandler(metadata: ThemeMetadata): Promise<boolean>
 		approval_state: metadata.approval_state,
 		color: metadata.color.hex,
 		alpha: metadata.color.alpha,
-		icon: metadata.icon
+		icon: metadata.icon,
+		thumbnail_urls: metadata.thumbnails_urls?.join(",")
 	} as SavableMetadata
 	try {
 		await ThemeTags.create(saveableMetaData as any)
@@ -169,7 +170,8 @@ function themeFromTags(tag: Model<any, any> | null): ThemeMetadata | undefined {
 			hex: tag?.get("color") as string,
 			alpha: tag?.get("alpha") as number,
 		} as MetadataColor,
-		icon: tag.get("icon") as string
+		icon: tag.get("icon") as string,
+		thumbnails_urls: (tag.get("thumbnail_urls") as string).split(",")
 	} as ThemeMetadata
 }
 
@@ -185,6 +187,7 @@ export interface SavableMetadata {
 	color: string
 	alpha: number
 	icon: string
+	thumbnail_urls: string
 }
 
 export const ThemeTags = sequelize.define("themes", {
@@ -222,4 +225,8 @@ export const ThemeTags = sequelize.define("themes", {
 		allowNull: false,
 	},
 	icon: Sequelize.STRING,
+	thumbnail_urls: {
+		type: STRING,
+		allowNull: true
+	}
 });

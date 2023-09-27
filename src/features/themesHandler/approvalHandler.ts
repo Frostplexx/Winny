@@ -1,12 +1,12 @@
 import {ThemeMetadata} from "./handleUploaded";
-import {clientUtils} from "../globals/utils";
+import {clientUtils} from "../../globals/utils";
 import {generateEmbed, uploadThemeToDiscord} from "./discordUploader";
 import {ButtonBuilder, ButtonInteraction, ButtonStyle, User} from "discord.js";
-import {SimpleButton} from "../userInteractionHandlers/buttonHandler/simpleButton";
+import {SimpleButton} from "../../userInteractionHandlers/buttonHandler/simpleButton";
 import {ActionRowBuilder} from "@discordjs/builders";
-import {Button} from "../userInteractionHandlers/buttonHandler/button";
-import {disableMsgButtonIndex} from "../userInteractionHandlers/buttonHandler/buttons.util";
-import {updateThemeWithID} from "../databaseHandler/databaseHandler";
+import {Button} from "../../userInteractionHandlers/buttonHandler/button";
+import {disableMsgButtonIndex} from "../../userInteractionHandlers/buttonHandler/buttons.util";
+import {updateThemeWithID} from "../../database/databaseHandler";
 
 export async function initiateApproval(metadata: ThemeMetadata) {
 	let user = await clientUtils.findUser("336806197158215682")
@@ -31,10 +31,10 @@ export async function initiateApproval(metadata: ThemeMetadata) {
 				yesButton,
 				noButton
 			])
-	await user.send({content: message, embeds: [embed], components: [row as any]})
+	await user.send({content: message, embeds: embed, components: [row as any]})
 }
 
-async function approveTheme(interaction: ButtonInteraction, btnEvent: SimpleButton, data: any) {
+async function approveTheme(interaction: ButtonInteraction, btnEvent: SimpleButton, data: ThemeMetadata | null) {
 	console.log("Approve Theme")
 	console.log(data)
 	await interaction.deferUpdate()
@@ -44,6 +44,7 @@ async function approveTheme(interaction: ButtonInteraction, btnEvent: SimpleButt
 	await updateThemeWithID(data.file_id, {
 		message_id: data.message_id,
 		attachment_url: data.attachment_url,
+		thumbnail_urls: data.thumbnails_urls != undefined ? data.thumbnails_urls.join(",") : "",
 		approval_state: ApprovalStates.ACCEPTED
 	})
 }
@@ -62,7 +63,7 @@ async function denyTheme(interaction: ButtonInteraction, btnEvent: SimpleButton,
  * @enum {string}
  */
 export enum ApprovalStates {
-	PENDING = 'pending', // or whatever initial state
+	PENDING = 'waiting for approval', // or whatever initial state
 	ACCEPTED = 'accepted',
 	DENIED = 'denied'
 	// ... other states ...

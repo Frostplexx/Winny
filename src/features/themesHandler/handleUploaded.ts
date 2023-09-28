@@ -18,7 +18,7 @@ export const handleUploaded = async (filename: string): Promise<void> => {
 	console.log(`Handling uploaded file: ${filename}`);
 	let folderName = filename.replace(".zip", "")
 	//get the file metadata
-	var metadata = await extractThemeMetadata(filename, `${cacheFolder}/${folderName}`)
+	const metadata = await extractThemeMetadata(filename, `${cacheFolder}/${folderName}`);
 	if (!metadata) {return}
 	await uploadTheme(metadata)
 	await initiateApproval(metadata)

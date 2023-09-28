@@ -1,0 +1,13 @@
+[
+  {
+    "selectOpt": {
+      "title": "Coming Soon",
+      "description": "coming soon?",
+      "value": "soon"
+    },
+    "messageOpt": {
+      "content": "Theres something mysterious about this place...",
+      "ephemeral": true
+    }
+  }
+]

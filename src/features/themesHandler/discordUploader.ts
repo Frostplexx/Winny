@@ -5,7 +5,6 @@ import {clientUtils, getHardcodedIDs, guildUtils} from "../../globals/utils";
 import {AttachmentBuilder, EmbedBuilder, messageLink, TextBasedChannel} from "discord.js";
 import {cacheFolder} from "../../globals/constants";
 import {getThemePreviewImage} from "../svgEditor";
-import {client} from "../../main";
 
 /**
  * Uploads a theme to Discord.
@@ -46,6 +45,9 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 	console.log(send.attachments)
 
 	metadata.attachment_url = send.attachments.first()!.url
+
+	//TODO this doesnt work anymore because of new embed thingy
+
 	// const thumbnail_1 = send.attachments.at(1)!.url
 	// const thumbnail_2 = send.attachments.at(2)!.url
 	// metadata.thumbnails_urls =  [thumbnail_2, thumbnail_1]

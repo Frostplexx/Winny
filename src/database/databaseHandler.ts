@@ -2,7 +2,7 @@ import {MetadataColor, ThemeMetadata} from "../features/themesHandler/handleUplo
 import * as Sequelize from "sequelize";
 import {ApprovalStates} from "../features/themesHandler/approvalHandler";
 import * as trace_events from "trace_events";
-import {ARRAY, DataTypes, Model, Op, STRING, where} from "sequelize";
+import {ARRAY, DataTypes, Model, STRING, where} from "sequelize";
 import {channelSafeFetchMessage, clientUtils, getHardcodedIDs, guildUtils} from "../globals/utils";
 import {client} from "../main";
 import {TextChannel} from "discord.js";
@@ -20,14 +20,13 @@ const sequelize = new Sequelize.Sequelize(
 	}
 );
 
-
 /**
  * Saves the theme metadata to the database.
  *
  * @param {ThemeMetadata} metadata - The metadata object for the theme.
- * @return {string | null}
+ * @return {void}
  */
-export async function uploadTheme(metadata: ThemeMetadata): Promise<string | undefined> {
+export async function uploadTheme(metadata: ThemeMetadata): Promise<boolean> {
 	let savableMetaData = {
 		file_name: metadata.file_name,
 		file_id: metadata.file_id,
@@ -41,33 +40,14 @@ export async function uploadTheme(metadata: ThemeMetadata): Promise<string | und
 		alpha: metadata.color.alpha,
 		icon: metadata.icon,
 		thumbnail_urls: metadata.thumbnails_urls?.join(",")
-	} as SavableMetadata;
-
+	} as SavableMetadata
 	try {
-		// Check if a theme with this id exists
-		let theme = await ThemeTags.findOne({
-			where: {
-				file_id: metadata.file_id
-			}
-		});
-
-		if(theme) {
-			// If a theme with this id exists, update it
-			await ThemeTags.update(savableMetaData, {
-				where: {
-					file_id:  metadata.file_id
-				}
-			});
-			// Return the message id
-			return themeFromTags(theme)!.message_id!;
-		} else {
-			// If no such theme exists, return null
-			return undefined;
-		}
-
-	} catch (error) {
-		console.error(error);
-		return undefined;
+		await ThemeTags.create(savableMetaData as any)
+		await ThemeTags.sync()
+		return true;
+	} catch (error){
+		console.error(error)
+		return false
 	}
 }
 

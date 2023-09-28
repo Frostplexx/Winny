@@ -43,13 +43,12 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 	let send = await channel.send({embeds: embed, files: [theme, imageDark, imageLight]})
 	metadata.message_id = send.id
 
-	// Wait for 2 seconds before adding the URLs
-	await new Promise(resolve => setTimeout(resolve, 2000)); // 2000 ms = 2 seconds
+	console.log(send.attachments)
 
 	metadata.attachment_url = send.attachments.first()!.url
-	const thumbnail_1 = send.attachments.at(1)!.url
-	const thumbnail_2 = send.attachments.at(2)!.url
-	metadata.thumbnails_urls =  [thumbnail_2, thumbnail_1]
+	// const thumbnail_1 = send.attachments.at(1)!.url
+	// const thumbnail_2 = send.attachments.at(2)!.url
+	// metadata.thumbnails_urls =  [thumbnail_2, thumbnail_1]
 
 	fs.rm(filePath, (err) => {
 		if (err) {

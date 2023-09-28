@@ -30,12 +30,15 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 	let filename = metadata.file_name
 	let filePath = path.join(cacheFolder, filename)
 
-	await delayOneSecond() //TODO: Remove this
+	let imageDarkPath = cacheFolder + `/dark-${metadata.file_id}.png`;
+	let imageLightPath = cacheFolder + `/light-${metadata.file_id}.png`;
+
+	await waitForFiles([imageDarkPath, imageLightPath]);
 
 	//TODO: Refactor this
 	let theme = new AttachmentBuilder(filePath)
-	let imageDark = new AttachmentBuilder(cacheFolder + `/dark-${metadata.file_id}.png`)
-	let imageLight = new AttachmentBuilder(cacheFolder + `/light-${metadata.file_id}.png`)
+	let imageDark = new AttachmentBuilder(imageDarkPath);
+	let imageLight = new AttachmentBuilder(imageLightPath);
 
 	if (!metadata.message_id || metadata.message_id == ""){
 		let send = await channel.send({embeds: embed, files: [theme, imageDark, imageLight]})
@@ -77,10 +80,6 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 			console.info(`Successfully deleted file at ${filePath}`);
 		}
 	})
-
-
-
-
 	return metadata
 }
 
@@ -112,11 +111,21 @@ export function generateEmbed(metadata: ThemeMetadata): EmbedBuilder[] {
 	]
 }
 
-
-function delayOneSecond(): Promise<void> {
-	return new Promise((resolve) => {
-		setTimeout(() => {
-			resolve();
-		}, 500);
-	});
+/**
+ * Wait until the specified files exist.
+ *
+ * @param {string[]} fileNames - The names of the files to wait for.
+ * @returns {Promise<void>} - A promise that resolves when all the files exist.
+ */
+async function waitForFiles(fileNames: string[]): Promise<void> {
+	for (const fileName of fileNames) {
+		await new Promise((resolve) => {
+			const interval = setInterval(() => {
+				if (fs.existsSync(fileName)) {
+					clearInterval(interval);
+					resolve(null);
+				}
+			}, 500); // Check every 500ms
+		});
+	}
 }

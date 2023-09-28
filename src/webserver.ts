@@ -31,6 +31,7 @@ export function expressServer(secret: string) {
     });
 
     app.use(limiter)
+    app.set('trust proxy', 1)
     app.use(express.json());
     app.use(cors());
     const server = app.listen(PORT, () => console.log(`Now listening on port ${PORT} 🚀`));

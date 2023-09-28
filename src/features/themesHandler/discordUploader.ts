@@ -40,22 +40,12 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 	let imageDark = new AttachmentBuilder(imageDarkPath);
 	let imageLight = new AttachmentBuilder(imageLightPath);
 
-	if (!metadata.message_id || metadata.message_id == ""){
-		let send = await channel.send({embeds: embed, files: [theme, imageDark, imageLight]})
-		metadata.message_id = send.id
-		if (send.attachments.size >= 3){
-			metadata.attachment_url = send.attachments.first()!.url
-			const thumbnail_1 = send.attachments.at(1)!.url
-			const thumbnail_2 = send.attachments.at(2)!.url
-			metadata.thumbnails_urls =  [thumbnail_2, thumbnail_1]
-		} else {
-			console.error("Not enough message attachments")
-		}
-	} else {
-		const {channelID, guildID} = getHardcodedIDs()
-		const message = await clientUtils.findMessage(guildID, channelID, metadata.message_id)
-		await message.edit({embeds: embed, files: [theme, imageDark, imageLight]})
-	}
+	let send = await channel.send({embeds: embed, files: [theme, imageDark, imageLight]})
+	metadata.message_id = send.id
+	metadata.attachment_url = send.attachments.first()!.url
+	const thumbnail_1 = send.attachments.at(1)!.url
+	const thumbnail_2 = send.attachments.at(2)!.url
+	metadata.thumbnails_urls =  [thumbnail_2, thumbnail_1]
 
 	fs.rm(filePath, (err) => {
 		if (err) {

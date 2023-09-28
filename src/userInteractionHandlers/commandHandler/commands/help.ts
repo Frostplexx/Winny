@@ -65,11 +65,11 @@ async function defaultHelpSend(interaction: any) {
 	const row = new ActionRowBuilder().addComponents(helpSelect);
 	const helpEmbed = new EmbedBuilder()
 		.setColor("#0099ff")
-		.setTitle("ℹ️ Help page of Winny")
+		.setTitle("Help page of Winny")
 		.setThumbnail("https://raw.githubusercontent.com/Kinark/winston/main/winston/Assets.xcassets/AppIcon.appiconset/Frame%207-1024.png")
 		.addFields(
 			{
-				name: "Who am I?",
+				name: "🤖 Who am I?",
 				value: "Welcome to Winny, your friendly virtual assistant!🌟 I'm here to assist you in managing our theme store and helping out with server-related tasks. Whether you need to upload themes, check theme statuses, or perform server operations, I'm here to streamline the process and make server management a breeze.",
 			},
 
@@ -83,11 +83,11 @@ async function defaultHelpSend(interaction: any) {
 					"- Current project updates: <#1124154008764956702>\n- Found a Bug? Report it here: <#1136045746865569962>\n- [Contribution Guide (TODO)](https://github.com/Kinark/winston#winston-for-reddit)",
 			},
 			{
-				name: "❕ Where to find us:",
+				name: "🔎 Where to find us:",
 				value: `- Patreon: https://www.patreon.com/user?u=93745105\n- Ko-fi: https://ko-fi.com/locafe\n- Discord: https://discord.gg/vU8U4DZx\n- GitHub: https://github.com/Kinark/Winston\n- TestFlight: https://testflight.apple.com/join/3UF8bAUN`,
 			},
 			{
-				name: "❔What if I need help?",
+				name: "🤨 What if I need help?",
 				value: "Don't fret to ask! The <#1123388195732721745> channel is always open. Or you can tag one of the people with these roles: <@&1095112007251939348>, <@&1140060935164264448>, <@&1094829533376552991>"
 			}
 		)

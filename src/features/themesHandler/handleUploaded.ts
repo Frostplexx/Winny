@@ -5,7 +5,7 @@ import path from "path";
 import * as util from "util";
 import {ApprovalStates, initiateApproval} from "./approvalHandler";
 import {uploadThemeToDiscord} from "./discordUploader";
-import {databaseHandler} from "../../database/databaseHandler";
+import {uploadTheme} from "../../database/databaseHandler";
 import {WinstonThemePreview} from "../svgEditor";
 
 /**
@@ -20,9 +20,12 @@ export const handleUploaded = async (filename: string): Promise<void> => {
 	//get the file metadata
 	var metadata = await extractThemeMetadata(filename, `${cacheFolder}/${folderName}`)
 	if (!metadata) {return}
-	await databaseHandler(metadata)
+	let messageId = await uploadTheme(metadata)
+	if (messageId) {
+		metadata.message_id = messageId
+		console.log(metadata.message_id)
+	}
 	await initiateApproval(metadata)
-	//metadata = await uploadThemeToDiscord(metadata)
 }
 
 /**

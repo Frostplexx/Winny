@@ -2,9 +2,10 @@ import fs from "fs";
 import path from "path";
 import {ThemeMetadata} from "./handleUploaded";
 import {clientUtils, getHardcodedIDs, guildUtils} from "../../globals/utils";
-import {AttachmentBuilder, EmbedBuilder, TextBasedChannel} from "discord.js";
+import {AttachmentBuilder, EmbedBuilder, messageLink, TextBasedChannel} from "discord.js";
 import {cacheFolder} from "../../globals/constants";
 import {getThemePreviewImage} from "../svgEditor";
+import {client} from "../../main";
 
 /**
  * Uploads a theme to Discord.
@@ -35,7 +36,23 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 	let theme = new AttachmentBuilder(filePath)
 	let imageDark = new AttachmentBuilder(cacheFolder + `/dark-${metadata.file_id}.png`)
 	let imageLight = new AttachmentBuilder(cacheFolder + `/light-${metadata.file_id}.png`)
-	let send = await channel.send({embeds: embed, files: [theme, imageDark, imageLight]})
+
+	if (!metadata.message_id || metadata.message_id == ""){
+		let send = await channel.send({embeds: embed, files: [theme, imageDark, imageLight]})
+		metadata.message_id = send.id
+		if (send.attachments.size >= 3){
+			metadata.attachment_url = send.attachments.first()!.url
+			const thumbnail_1 = send.attachments.at(1)!.url
+			const thumbnail_2 = send.attachments.at(2)!.url
+			metadata.thumbnails_urls =  [thumbnail_2, thumbnail_1]
+		} else {
+			console.error("Not enough message attachments")
+		}
+	} else {
+		const {channelID, guildID} = getHardcodedIDs()
+		const message = await clientUtils.findMessage(guildID, channelID, metadata.message_id)
+		await message.edit({embeds: embed, files: [theme, imageDark, imageLight]})
+	}
 
 	fs.rm(filePath, (err) => {
 		if (err) {
@@ -61,11 +78,7 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 		}
 	})
 
-	metadata.message_id = send.id
-	metadata.attachment_url = send.attachments.first()!.url
-	const thumbnail_1 = send.attachments.at(1)!.url
-	const thumbnail_2 = send.attachments.at(2)!.url
-	metadata.thumbnails_urls =  [thumbnail_2, thumbnail_1]
+
 
 
 	return metadata

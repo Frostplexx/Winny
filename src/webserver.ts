@@ -14,6 +14,7 @@ import {
 } from "./database/databaseHandler";
 import ws from "ws";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 
 //minimal express server
 const app = express();
@@ -22,6 +23,14 @@ export const wsServer = new ws.Server({noServer: true});
 
 //start the express server on port 3000
 export function expressServer(secret: string) {
+
+    // limit each IP to 100 requests per windowMs
+    const limiter = rateLimit({
+        windowMs: 1000, // 1 second
+        limit: 10
+    });
+
+    app.use(limiter)
     app.use(express.json());
     app.use(cors());
     const server = app.listen(PORT, () => console.log(`Now listening on port ${PORT} 🚀`));
@@ -121,7 +130,12 @@ export function expressServer(secret: string) {
             req.headers.authorization.split(" ")[1] == secret
         ) {
             //Handle got message
-            let themes = await getAllThemes()
+            //Handle got message
+            // Define default fetch limit and offset
+            let fetchLimit = req.query.fetchLimit || 100;
+            let offset = req.query.offset || 0;
+
+            let themes = await getAllThemes(fetchLimit, offset)
             res.status(200).json(themes);
         } else {
             console.error("Error: Bearer Token mismatch");

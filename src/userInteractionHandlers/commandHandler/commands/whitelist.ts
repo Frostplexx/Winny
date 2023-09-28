@@ -1,11 +1,7 @@
-import {ChatInputCommandInteraction, EmbedBuilder, Interaction, SlashCommandBuilder} from 'discord.js'
+import {ChatInputCommandInteraction, SlashCommandBuilder} from 'discord.js'
 import SlashCommand from "../commandTypes/slashCommand";
-import {clearCache} from "../../../globals/utils";
-import * as fs from 'fs'
-import {cacheFolder} from "../../../globals/constants";
 import {
 	addUserToWhitelist,
-	getUserEligibility,
 	isUserInWhitelist,
 	removeUserFromWhitelist
 } from "../../../globals/security";

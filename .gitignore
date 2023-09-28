@@ -1,4 +1,7 @@
 ### Node template
+./src/whitelist.json
+./src/channels.json
+
 # Logs
 logs
 *.log

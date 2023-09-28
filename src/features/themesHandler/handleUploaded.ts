@@ -20,11 +20,7 @@ export const handleUploaded = async (filename: string): Promise<void> => {
 	//get the file metadata
 	var metadata = await extractThemeMetadata(filename, `${cacheFolder}/${folderName}`)
 	if (!metadata) {return}
-	let messageId = await uploadTheme(metadata)
-	if (messageId) {
-		metadata.message_id = messageId
-		console.log(metadata.message_id)
-	}
+	await uploadTheme(metadata)
 	await initiateApproval(metadata)
 }
 

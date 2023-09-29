@@ -1,7 +1,7 @@
 import { ApplicationCommand, Client, Collection, GatewayIntentBits, Partials } from "discord.js";
 import {loadAllCommands} from "./userInteractionHandlers/commandHandler/commands";
 import {loadEvents} from "./eventHandler/events";
-import {expressServer} from "./webserver";
+import {expressServer} from "./features/webHandler/webserver";
 import {clearCache} from "./globals/utils";
 import {ThemeTags} from "./database/databaseHandler";
 import dotenv from "dotenv";

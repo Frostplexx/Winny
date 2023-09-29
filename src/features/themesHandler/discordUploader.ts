@@ -2,9 +2,19 @@ import fs from "fs";
 import path from "path";
 import {ThemeMetadata} from "./handleUploaded";
 import {clientUtils, getHardcodedIDs, guildUtils} from "../../globals/utils";
-import {AttachmentBuilder, EmbedBuilder, messageLink, TextBasedChannel} from "discord.js";
+import {
+	ActionRowBuilder,
+	AttachmentBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	EmbedBuilder,
+	messageLink,
+	TextBasedChannel
+} from "discord.js";
 import {cacheFolder} from "../../globals/constants";
 import {getThemePreviewImage} from "../svgEditor";
+import {uploadToBucket} from "../webHandler/S3Buckets/uploadToBucket";
+import {Button} from "../../userInteractionHandlers/buttonHandler/button";
 
 /**
  * Uploads a theme to Discord.
@@ -34,23 +44,24 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 
 	await waitForFiles([imageDarkPath, imageLightPath]);
 
+	//upload to S3 storage
+	await uploadToBucket(filePath, [], [])
+
+	const button = new ButtonBuilder()
+		.setLabel("Download Theme")
+		.setEmoji("⬇️")
+		.setStyle(ButtonStyle.Link)
+		.setURL(process.env.BOT_URL + "/themes/redirect/" + metadata.file_name)
+	const row = new ActionRowBuilder()
+		.addComponents(button)
+
 	//TODO: Refactor this
-	let theme = new AttachmentBuilder(filePath)
+	// let theme = new AttachmentBuilder(filePath)
 	let imageDark = new AttachmentBuilder(imageDarkPath);
 	let imageLight = new AttachmentBuilder(imageLightPath);
 
-	let send = await channel.send({embeds: embed, files: [theme, imageDark, imageLight]})
+	let send = await channel.send({embeds: embed, files: [imageDark, imageLight], components: [row as any]})
 	metadata.message_id = send.id
-
-	console.log(send.attachments)
-
-	metadata.attachment_url = send.attachments.first()!.url
-
-	//TODO this doesnt work anymore because of new embed thingy
-
-	// const thumbnail_1 = send.attachments.at(1)!.url
-	// const thumbnail_2 = send.attachments.at(2)!.url
-	// metadata.thumbnails_urls =  [thumbnail_2, thumbnail_1]
 
 	fs.rm(filePath, (err) => {
 		if (err) {

@@ -43,8 +43,6 @@ async function approveTheme(interaction: ButtonInteraction, btnEvent: SimpleButt
 	if (!data) {return}
 	await updateThemeWithID(data.file_id, {
 		message_id: data.message_id,
-		attachment_url: data.attachment_url,
-		thumbnail_urls: data.thumbnails_urls != undefined ? data.thumbnails_urls.join(",") : "",
 		approval_state: ApprovalStates.ACCEPTED
 	})
 }

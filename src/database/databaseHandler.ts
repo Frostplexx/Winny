@@ -34,12 +34,10 @@ export async function uploadTheme(metadata: ThemeMetadata): Promise<boolean> {
 		theme_author: metadata.theme_author,
 		theme_description: metadata.theme_description,
 		message_id: metadata.message_id,
-		attachment_url: metadata.attachment_url,
 		approval_state: metadata.approval_state,
 		color: metadata.color.hex,
 		alpha: metadata.color.alpha,
 		icon: metadata.icon,
-		thumbnail_urls: metadata.thumbnails_urls?.join(",")
 	} as SavableMetadata
 	try {
 		await ThemeTags.create(savableMetaData as any)
@@ -169,13 +167,11 @@ function themeFromTags(tag: Model<any, any> | null): ThemeMetadata | undefined {
 		theme_author: tag?.get("theme_author") as string,
 		theme_description: tag?.get("theme_description") as string,
 		approval_state: tag?.get("approval_state") as ApprovalStates,
-		attachment_url:  tag?.get("attachment_url") as string,
 		color: {
 			hex: tag?.get("color") as string,
 			alpha: tag?.get("alpha") as number,
 		} as MetadataColor,
 		icon: tag.get("icon") as string,
-		thumbnails_urls: (tag.get("thumbnail_urls") as string).split(",")
 	} as ThemeMetadata
 }
 
@@ -186,12 +182,10 @@ export interface SavableMetadata {
 	theme_author: string
 	theme_description: string
 	message_id: string
-	attachment_url: string
 	approval_state: ApprovalStates
 	color: string
 	alpha: number
 	icon: string
-	thumbnail_urls: string
 }
 
 export const ThemeTags = sequelize.define("themes", {
@@ -217,10 +211,6 @@ export const ThemeTags = sequelize.define("themes", {
 		allowNull: true,
 		unique: true
 	},
-	attachment_url: {
-		type: Sequelize.STRING,
-		allowNull: true
-	},
 	approval_state: Sequelize.STRING,
 	color: Sequelize.STRING,
 	alpha: {
@@ -229,8 +219,4 @@ export const ThemeTags = sequelize.define("themes", {
 		allowNull: false,
 	},
 	icon: Sequelize.STRING,
-	thumbnail_urls: {
-		type: STRING,
-		allowNull: true
-	}
 });

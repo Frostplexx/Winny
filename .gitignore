@@ -137,5 +137,5 @@ dist
 /src/database/themes_database.sqlite
 /.idea/sshConfigs.xml
 /.idea/deployment.xml
-/channels.json
-/whitelist.json
+/src/channels.json
+/src/whitelist.json

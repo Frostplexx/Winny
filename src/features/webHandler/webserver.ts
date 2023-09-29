@@ -1,20 +1,22 @@
 // Require express and body-parser
 import express from "express";
-import multer, { StorageEngine } from 'multer';
+import multer from 'multer';
 import path from "path";
-import {generateTimeBasedUUID, getUserEligibility} from "./globals/security";
-import {handleUploaded} from "./features/themesHandler/handleUploaded";
-import {cacheFolder} from "./globals/constants";
+import {generateTimeBasedUUID, getUserEligibility} from "../../globals/security";
+import {handleUploaded} from "../themesHandler/handleUploaded";
+import {cacheFolder} from "../../globals/constants";
 import {
     deleteThemeWithID,
     getAllThemes,
     getThemeFromID, getThemeStatus,
     SavableMetadata,
     updateThemeWithID
-} from "./database/databaseHandler";
+} from "../../database/databaseHandler";
 import ws from "ws";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import {getDownloadURL} from "./S3Buckets/getDownloadableURL";
+import {streamS3ObjectToResponse} from "./S3Buckets/getFileStream";
 
 //minimal express server
 const app = express();
@@ -220,6 +222,31 @@ export function expressServer(secret: string) {
         } else {
             console.error("Error: Bearer Token mismatch");
             res.sendStatus(403); // Forbidden
+        }
+    });
+
+    app.get("/themes/redirect/:themeID", async (req: express.Request, res: express.Response) => {
+        let id = req.params.themeID;
+        let url = await getDownloadURL(id)
+        res.redirect(url);
+    });
+
+    app.get("/themes/attachment/:themeID", async (req: any, res: any) => {
+        if (
+            req.headers.authorization.split(" ")[0] == "Bearer" &&
+            req.headers.authorization.split(" ")[1] == secret
+        ) {
+            let id = req.params.themeID;
+            const key = `themes/${id}`; // if zip files are named by id you can construct key like this
+            try {
+                await streamS3ObjectToResponse(key, res);
+            } catch (e) {
+                console.error("Error streaming the file from S3.", e);
+                res.sendStatus(500);
+            }
+        } else {
+            console.error("Error: Bearer Token mismatch");
+            res.sendStatus(403);
         }
     });
 }

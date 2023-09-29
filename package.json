@@ -6,13 +6,13 @@
   "scripts": {
     "build": "tsc",
     "start": "ts-node ./src/main.ts",
-    "prod": "pm2 start --env production",
     "dev": "tsnd --respawn --inspect -- ./src/main.ts",
-    "prod-update": "pm2 delete Winny && git pull && npm i && npm run prod"
+    "deploy": "pm2 deploy production"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Frostplexx",
+  "license": "",
   "dependencies": {
+    "@aws-sdk/s3-request-presigner": "^3.421.0",
     "@types/multer": "^1.4.7",
     "cors": "^2.8.5",
     "discord.js": "^14.13.0",

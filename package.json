@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "ts-node ./src/main.ts",
-    "prod": "pm2 start run-ts.sh --name Winny",
+    "prod": "pm2 start --env production",
+    "dev": "tsnd --respawn --inspect -- ./src/main.ts",
     "prod-update": "pm2 delete Winny && git pull && npm i && npm run prod"
   },
   "author": "",

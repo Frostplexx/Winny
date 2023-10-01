@@ -5,6 +5,7 @@ import {expressServer} from "./features/webHandler/webserver";
 import {clearCache} from "./globals/utils";
 import {ThemeTags} from "./database/databaseHandler";
 import dotenv from "dotenv";
+import {ensureFilesExist} from "./globals/startup";
 
 dotenv.config({ path: "./.env" });
 // Create a new client instance
@@ -24,19 +25,22 @@ export const client = Object.assign(
 	}
 );
 
-clearCache()
-ThemeTags.sync().then(() => {
+async function init() {
+	await ensureFilesExist();
+	clearCache();
+	await ThemeTags.sync();
+
 	loadAllCommands(client);
-	expressServer(process.env.BEARER!)
+	expressServer(process.env.BEARER!);
 
+	await client.login(process.env.TOKEN);
 
-	client.login(process.env.TOKEN).then(async () => {
-		console.log("Logged in as " + client.user!.tag);
-		loadEvents(client);
-		client.user?.setPresence({
-			status: "online",
-			activities: [{ name: `/help | Version ${process.env.npm_package_version}` }],
-		});
-
+	console.log("Logged in as " + client.user!.tag);
+	loadEvents(client);
+	client.user?.setPresence({
+		status: "online",
+		activities: [{ name: `/help | Version ${process.env.npm_package_version}` }],
 	});
-})
+}
+
+init();

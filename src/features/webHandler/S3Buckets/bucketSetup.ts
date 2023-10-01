@@ -1,5 +1,4 @@
-import { S3Client, PutObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
-import { promises as fs } from "fs";
+import { S3Client } from "@aws-sdk/client-s3";
 import { config } from 'dotenv';
 config();
 
@@ -16,12 +15,10 @@ config();
  * @param {string} options.endpoint - The S3 endpoint to connect to.
  */
 export const s3Client = new S3Client({
-	region: "garage",
-	credentials: {
-		accessKeyId: process.env.S3_KEY_ID!,
-		secretAccessKey: process.env.S3_KEY!,
-	},
-	endpoint: process.env.S3_ENDPOINT
+  region: "garage",
+  credentials: {
+    accessKeyId: process.env.S3_KEY_ID!,
+    secretAccessKey: process.env.S3_KEY!,
+  },
+  endpoint: process.env.S3_ENDPOINT
 });
-
-

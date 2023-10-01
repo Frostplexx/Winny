@@ -1,7 +1,7 @@
 import {ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashCommandBuilder} from 'discord.js';
 import SlashCommand from "../commandTypes/slashCommand";
 import {
-	getAppVersionAndBuildNumber, getTotalTestersCount, getWhatToTest,
+	getAppVersionAndBuildNumber, getJoinable, getWhatToTest,
 } from "../../../features/webHandler/appstoreConnect";
 
 export default new SlashCommand({
@@ -12,7 +12,7 @@ export default new SlashCommand({
 	async execute(interaction): Promise<void> {
 		await interaction.deferReply()
 		const versionNumber = await getAppVersionAndBuildNumber()
-		const members = await getTotalTestersCount()
+		const members = await getJoinable()
 		const changelog = await getWhatToTest()
 		const testFlightAvailable = members != null && members < 10000
 
@@ -29,17 +29,12 @@ export default new SlashCommand({
 				new EmbedBuilder()
 					.setThumbnail("https://raw.githubusercontent.com/Frostplexx/Winny/main/src/assets/testflight.jpg")
 					.setTitle("TestFlight Info for Winny v" + versionNumber)
-					.setDescription(`### Status\n\n${getEmoji(testFlightAvailable)}\n\n----- ${members}/10,000 Testers -----\n### What to Test\n${changelog}`)
+					.setDescription(`### Status\n\n${getEmoji(testFlightAvailable)}\n\n----- ${members.toLocaleString('en-US')		}/10,000 Testers -----\n### What to Test\n${changelog}`)
 					.setColor("#158AE3")
 					.setFooter({ text: "Winny - v" + process.env.npm_package_version, iconURL: "https://cdn.discordapp.com/avatars/1155787817302114346/6e737c3f17d1415f1883b67661c433c0.png?size=160" })
 			]
 		}
 		await interaction.editReply({embeds: embed(), components: testFlightAvailable ? [row as any ] : []})
-		// if (testers){
-		// 	await interaction.reply(`Testers: ${testers}`)
-		// } else {
-		// 	await interaction.reply("Testers is null")
-		// }
 	},
 });
 

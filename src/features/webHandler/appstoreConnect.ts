@@ -79,6 +79,7 @@ export async function getJoinable() {
 	}
 }
 
+
 export const getAppVersionAndBuildNumber = async (): Promise<any | null> => {
 	const appId = process.env.APPLE_CONNECT_APP_ID;
 

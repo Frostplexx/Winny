@@ -7,7 +7,7 @@ import {
 export default new SlashCommand({
 	data: new SlashCommandBuilder()
 		.setName('testflight')
-		.setDescription('set the location of the themes channel'),
+		.setDescription('See the current TestFlight status'),
 
 	async execute(interaction): Promise<void> {
 		await interaction.deferReply()

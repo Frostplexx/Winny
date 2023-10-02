@@ -107,7 +107,7 @@ async function fixThemeCommand(interaction: ChatInputCommandInteraction): Promis
 	const theme: Record<string, any> = JSON.parse(themeStr);
 
 	const specialCases: SpecialCases = {
-		'weight': ['medium', 'semibold', 'regular'],
+		'weight': ['medium', 'semibold', 'regular', 'light'],
 		"style": ["fancy", "no"]
 	};
 

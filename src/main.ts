@@ -26,7 +26,7 @@ export const client = Object.assign(
 );
 
 async function init() {
-	await ensureFilesExist();
+	// await ensureFilesExist();
 	clearCache();
 	await ThemeTags.sync();
 

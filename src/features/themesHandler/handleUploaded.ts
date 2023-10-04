@@ -1,10 +1,9 @@
-import unzipper, {Open} from 'unzipper';
+import unzipper from 'unzipper';
 import fs from 'fs';
 import {cacheFolder} from "../../globals/constants";
 import path from "path";
 import * as util from "util";
 import {ApprovalStates, initiateApproval} from "./approvalHandler";
-import {uploadThemeToDiscord} from "./discordUploader";
 import {uploadTheme} from "../../database/databaseHandler";
 import {WinstonThemePreview} from "../svgEditor";
 
@@ -83,7 +82,7 @@ async function extractThemeMetadata(filename: string, extractPath: string): Prom
 					themeColorsDark: {
 						background: "#" + jsonContent.posts.bg.color._0.dark.hex,
 						accentColor: "#" + jsonContent.general.accentColor.dark.hex,
-						tabBarBackground: jsonContent.general.tabBarBG.color.dark.hex == "#ffffff" ? "#000000" : "#" + jsonContent.general.tabBarBG.color.dark.hex,
+						tabBarBackground: jsonContent.general.tabBarBG.color.dark.hex.toUpperCase() == "FFFFFF" ? "#" + jsonContent.posts.bg.color._0.dark.hex : "#" + jsonContent.general.tabBarBG.color.dark.hex,
 						subredditPillBackground: "#CCE4FF",
 						divider: jsonContent.lists.dividersColors.dark.hex,
 						tabBarInactiveColor: "#A1A1A1",

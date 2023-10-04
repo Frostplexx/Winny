@@ -8,13 +8,11 @@ import {
 	ButtonBuilder,
 	ButtonStyle,
 	EmbedBuilder,
-	messageLink,
 	TextBasedChannel
 } from "discord.js";
 import {cacheFolder} from "../../globals/constants";
 import {getThemePreviewImage} from "../svgEditor";
 import {uploadToBucket} from "../webHandler/S3Buckets/uploadToBucket";
-import {Button} from "../../userInteractionHandlers/buttonHandler/button";
 
 /**
  * Uploads a theme to Discord.
@@ -29,7 +27,7 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 
 	const {guildID, channelID} = getHardcodedIDs();
 
-	getThemePreviewImage(metadata)
+	const previews = getThemePreviewImage(metadata)
 
 	let guild = await clientUtils.findGuild(guildID)
 	if (!guild) {return null}
@@ -39,13 +37,12 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 	let filename = metadata.file_name
 	let filePath = path.join(cacheFolder, filename)
 
-	let imageDarkPath = cacheFolder + `/dark-${metadata.file_id}.png`;
-	let imageLightPath = cacheFolder + `/light-${metadata.file_id}.png`;
 
-	await waitForFiles([imageDarkPath, imageLightPath]);
+	await waitForFiles(previews);
+	console.log(previews)
 
 	//upload to S3 storage
-	await uploadToBucket(filePath, [], [])
+	await uploadToBucket(filePath, previews.filter( p => {p.includes("light")}), previews.filter( p => {p.includes("dark")}))
 
 	const button = new ButtonBuilder()
 		.setLabel("Download Theme")
@@ -55,12 +52,12 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 	const row = new ActionRowBuilder()
 		.addComponents(button)
 
-	//TODO: Refactor this
-	// let theme = new AttachmentBuilder(filePath)
-	let imageDark = new AttachmentBuilder(imageDarkPath);
-	let imageLight = new AttachmentBuilder(imageLightPath);
 
-	let send = await channel.send({embeds: embed, files: [imageDark, imageLight], components: [row as any]})
+	const attachments = previews.map(p => {
+		return new AttachmentBuilder(p)
+	})
+
+	let send = await channel.send({embeds: embed, files: attachments, components: [row as any]})
 	metadata.message_id = send.id
 
 	fs.rm(filePath, (err) => {
@@ -71,23 +68,19 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 		}
 	})
 
-	fs.rm(cacheFolder + `/dark-${metadata.file_id}.png`, (err) => {
-		if (err) {
-			console.error(`Error deleting file at ${filePath}:`, err);
-		} else {
-			console.info(`Successfully deleted file at ${filePath}`);
-		}
+	previews.forEach(p => {
+		fs.rm(p, (err) => {
+			if (err) {
+				console.error(`Error deleting file at ${filePath}:`, err);
+			} else {
+				console.info(`Successfully deleted file at ${filePath}`);
+			}
+		})
 	})
 
-	fs.rm(cacheFolder + `/light-${metadata.file_id}.png`, (err) => {
-		if (err) {
-			console.error(`Error deleting file at ${filePath}:`, err);
-		} else {
-			console.info(`Successfully deleted file at ${filePath}`);
-		}
-	})
 	return metadata
 }
+
 
 /**
  * Generates an embed object from the given metadata.

@@ -14,93 +14,130 @@ export interface WinstonThemePreview {
 	postBodyText: string;
 }
 
-//TODO: Refactor this to be more better
+/**
+ * Represents a color to replace object.
+ * @interface
+ */
+interface ColorToReplace{
+	[key: string]: {
+		lightColor: string,
+		darkColor: string
+	}
+}
+
+/**
+ * Converts an SVG file to PNG format.
+ *
+ * @param {string} filename - The path of the SVG file to convert.
+ * @return {string} - The path of the converted PNG file.
+ */
+function convertToPNG(filename: string): string {
+	sharp(filename)
+		.png()
+		.toFile(filename.replace(".svg", ".png"), (err) => {
+			if (err) {
+				console.error("Error during conversion to PNG ", err);
+				return;
+			}
+
+			// The SVG to PNG conversion is successful at this point
+
+			// Now let's delete the SVG file
+			fs.rm(filename, (err) => {
+				if (err) {
+					console.error("Error deleting the SVG file", err);
+				} else {
+					console.log("SVG file deleted successfully");
+				}
+			});
+		});
+	console.log(filename)
+	return filename.replace(".svg", ".png")
+}
+
+/**
+ * Retrieves theme preview images based on the provided metadata.
+ * Replaces specific colors in SVG template files with light and dark colors from metadata.
+ * Converts the updated SVG files to PNG format.
+ *
+ * @param metadata - The theme metadata containing color values.
+ * @returns An array of filenames of the generated preview images in PNG format.
+ */
 export function getThemePreviewImage(metadata: ThemeMetadata) {
-	const colorsToReplaceLight: { [key: string]: string } = {
-		"#F2F2F7": metadata.themeColorsLight.background,
-		"#007AFF": metadata.themeColorsLight.accentColor,
-		"#CCE4FF": metadata.themeColorsLight.subredditPillBackground,
-		"#F2F2F2": metadata.themeColorsLight.divider,
-		"#A1A1A1": metadata.themeColorsLight.tabBarInactiveColor,
-		"#ADAEAE": metadata.themeColorsLight.tabBarInactiveTextColor,
-		"#FFFFFE": metadata.themeColorsLight.postBackground,
-		"#F7F7F8": metadata.themeColorsLight.tabBarBackground,
-		"#000001": metadata.themeColorsLight.postTitleText,
-		"#000002": metadata.themeColorsLight.postBodyText,
-		"#000003": "#000000",
-	};
 
-	const colorsToReplaceDark: { [key: string]: string } = {
-		"#F2F2F7": metadata.themeColorsDark.background,
-		"#007AFF": metadata.themeColorsDark.accentColor,
-		"#CCE4FF": metadata.themeColorsDark.subredditPillBackground,
-		"#F2F2F2": metadata.themeColorsDark.divider,
-		"#A1A1A1": metadata.themeColorsDark.tabBarInactiveColor,
-		"#ADAEAE": metadata.themeColorsDark.tabBarInactiveTextColor,
-		"#FFFFFE": metadata.themeColorsDark.postBackground,
-		"#F7F7F8": metadata.themeColorsDark.tabBarBackground,
-		"#000001": metadata.themeColorsDark.postTitleText,
-		"#000002": metadata.themeColorsDark.postBodyText,
-		"#000003": "#FFFFFF",
-	};
-
-	let svgData = fs.readFileSync('./src/assets/Winston.svg', 'utf8');
-
-	let svgDataDrk = svgData
-	let svgDataLight = svgData
-
-	for (let color in colorsToReplaceDark) {
-		let regex = new RegExp(color, 'g');
-		svgDataDrk = svgDataDrk.replace(regex, colorsToReplaceDark[color]);
+	const colorsToReplace: ColorToReplace = {
+		"#F2F2F7": {
+			lightColor: metadata.themeColorsLight.background,
+			darkColor: metadata.themeColorsDark.background
+		},
+		"#007AFF": {
+			lightColor: metadata.themeColorsLight.accentColor,
+			darkColor: metadata.themeColorsDark.accentColor
+		},
+		"#CCE4FF": {
+			lightColor: metadata.themeColorsLight.subredditPillBackground,
+			darkColor: metadata.themeColorsDark.subredditPillBackground
+		},
+		"#F2F2F2": {
+			lightColor: metadata.themeColorsLight.divider,
+			darkColor: metadata.themeColorsDark.divider
+		},
+		"#A1A1A1": {
+			lightColor: metadata.themeColorsLight.tabBarInactiveColor,
+			darkColor: metadata.themeColorsDark.tabBarInactiveColor
+		},
+		"#ADAEAE": {
+			lightColor: metadata.themeColorsLight.tabBarInactiveTextColor,
+			darkColor: metadata.themeColorsDark.tabBarInactiveTextColor
+		},
+		"#FFFFFE": {
+			lightColor: metadata.themeColorsLight.postBackground,
+			darkColor: metadata.themeColorsDark.postBackground
+		},
+		"#F7F7F8": {
+			lightColor: metadata.themeColorsLight.tabBarBackground,
+			darkColor: metadata.themeColorsDark.tabBarBackground
+		},
+		"#000001": {
+			lightColor: metadata.themeColorsLight.postTitleText,
+			darkColor:metadata.themeColorsDark.postTitleText
+		},
+		"#000002": {
+			lightColor: metadata.themeColorsLight.postBodyText,
+			darkColor: metadata.themeColorsDark.postBodyText
+		},
+		"#000003": {
+			lightColor: "#000000",
+			darkColor: "#FFFFFF"
+		}
 	}
 
-	for (let color in colorsToReplaceLight) {
-		let regex = new RegExp(color, 'g');
-		svgDataLight = svgDataLight.replace(regex, colorsToReplaceLight[color]);
-	}
+	//max if two svgs, because 2 * 2 (one dark and one light) = 4 which is the max you can see inside embeds
+	let svgAssetsTemplates: string[] = ["winston.svg"]
+	let counter = 0;
+	let filenames: string[] = [];
 
-	fs.writeFileSync('./src/assets/light-' + metadata.file_id + ".svg", svgDataLight);
+	svgAssetsTemplates.forEach(file => {
+		let svgData = fs.readFileSync('./src/assets/' + file, 'utf8');
 
-	fs.writeFileSync('./src/assets/dark-' + metadata.file_id + ".svg", svgDataDrk);
+		let svgDataDrk = svgData
+		let svgDataLight = svgData
 
-	// Convert SVG to PNG
-	sharp('./src/assets/light-' + metadata.file_id + ".svg")
-		.png()
-		.toFile('./src/cache/light-' + metadata.file_id + ".png", (err) => {
-			if(err) {
-				console.error("Error during conversion to PNG ", err);
-				return;
-			}
+		for (let color in colorsToReplace) {
+			let regex = new RegExp(color, 'g');
+			svgDataDrk = svgDataDrk.replace(regex, colorsToReplace[color].darkColor);
+			svgDataLight = svgDataLight.replace(regex, colorsToReplace[color].lightColor);
+		}
 
-			// The SVG to PNG conversion is successful at this point
+		const lightFile = `./src/assets/${counter}-light-${metadata.file_id}.svg`
+		const darkFile = `./src/assets/${counter}-dark-${metadata.file_id}.svg`
+		fs.writeFileSync(lightFile, svgDataLight);
+		fs.writeFileSync(darkFile, svgDataDrk);
 
-			// Now let's delete the SVG file
-			fs.rm('./src/assets/light-' + metadata.file_id + ".svg", (err) => {
-				if(err) {
-					console.error("Error deleting the SVG file", err);
-				} else {
-					console.log("SVG file deleted successfully");
-				}
-			});
-		});
+		filenames.push(convertToPNG(lightFile));
+		filenames.push(convertToPNG(darkFile));
+		counter++
+	})
 
-	sharp('./src/assets/dark-' + metadata.file_id + ".svg")
-		.png()
-		.toFile('./src/cache/dark-' + metadata.file_id + ".png", (err) => {
-			if(err) {
-				console.error("Error during conversion to PNG ", err);
-				return;
-			}
-
-			// The SVG to PNG conversion is successful at this point
-
-			// Now let's delete the SVG file
-			fs.rm('./src/assets/dark-' + metadata.file_id + ".svg", (err) => {
-				if(err) {
-					console.error("Error deleting the SVG file", err);
-				} else {
-					console.log("SVG file deleted successfully");
-				}
-			});
-		});
+	return filenames
 }

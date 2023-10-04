@@ -16,9 +16,9 @@ export const event: Event = {
 		if (!client.commands.has(interaction.commandName)) return;
 
 		try {
-			const command: SlashCommand = (await client.commands.get(
+			const command: SlashCommand = client.commands.get(
 				interaction.commandName
-			)) as unknown as SlashCommand;
+			) as unknown as SlashCommand;
 			await command.execute(interaction);
 		} catch (error) {
 			console.error(error);

@@ -13,6 +13,7 @@ import {
 import {cacheFolder} from "../../globals/constants";
 import {getThemePreviewImage} from "../svgEditor";
 import {uploadToBucket} from "../webHandler/S3Buckets/uploadToBucket";
+import {getMessageIdByThemeID, getThemeFromID} from "../../database/databaseHandler";
 
 /**
  * Uploads a theme to Discord.
@@ -39,7 +40,9 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 
 
 	await waitForFiles(previews);
-	console.log(previews)
+
+	//check if message already exists
+	const messageID = metadata.message_id || await getMessageIdByThemeID(metadata.file_id)
 
 	//upload to S3 storage
 	await uploadToBucket(filePath, previews.filter( p => {p.includes("light")}), previews.filter( p => {p.includes("dark")}))
@@ -57,8 +60,15 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 		return new AttachmentBuilder(p)
 	})
 
-	let send = await channel.send({embeds: embed, files: attachments, components: [row as any]})
-	metadata.message_id = send.id
+	if (messageID != undefined){
+		//try and get the message
+		const {guildID, channelID} = getHardcodedIDs()
+		const message= await clientUtils.findMessage(guildID, channelID, messageID)
+		await message.edit({embeds: embed, files: attachments, components: [row as any]})
+	} else {
+		let send = await channel.send({embeds: embed, files: attachments, components: [row as any]})
+		metadata.message_id = send.id
+	}
 
 	fs.rm(filePath, (err) => {
 		if (err) {

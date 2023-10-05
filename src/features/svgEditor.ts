@@ -112,7 +112,7 @@ export function getThemePreviewImage(metadata: ThemeMetadata) {
 		}
 	}
 
-	//max if two svgs, because 2 * 2 (one dark and one light) = 4 which is the max you can see inside embeds
+	//max if two svg, because 2 * 2 (one dark and one light) = 4 which is the max you can see inside embeds
 	let svgAssetsTemplates: string[] = ["winston.svg"]
 	let counter = 0;
 	let filenames: string[] = [];

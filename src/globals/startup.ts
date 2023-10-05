@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { promisify } from 'util';
+import {getAllThemes} from "../database/databaseHandler";
 
 const writeFile = promisify(fs.writeFile);
 const access = promisify(fs.access);
@@ -50,9 +51,3 @@ export async function ensureFilesExist() {
 		await writeFile(path.resolve(__dirname, '../whitelist.json'), whitelistsJsonContents);
 	}
 }
-
-ensureFilesExist().then(() => {
-	console.log('Files verified.');
-}).catch((err) => {
-	console.error(err);
-});

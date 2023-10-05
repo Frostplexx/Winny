@@ -4,7 +4,7 @@ import {cacheFolder} from "../../globals/constants";
 import path from "path";
 import * as util from "util";
 import {ApprovalStates, initiateApproval} from "./approvalHandler";
-import {uploadTheme} from "../../database/databaseHandler";
+import {getThemeFromID, saveOrUpdateTheme} from "../../database/databaseHandler";
 import {WinstonThemePreview} from "../svgEditor";
 
 /**
@@ -19,7 +19,18 @@ export const handleUploaded = async (filename: string): Promise<void> => {
 	//get the file metadata
 	const metadata = await extractThemeMetadata(filename, `${cacheFolder}/${folderName}`);
 	if (!metadata) {return}
-	await uploadTheme(metadata)
+
+	//rename the zip file to be the same as the one in maybeTheme
+	const maybeTheme = await getThemeFromID(metadata.file_id)
+	if (maybeTheme != undefined){
+		const oldFilePath = `${cacheFolder}/${filename}`
+		const newFilePath = `${cacheFolder}/${maybeTheme.file_name}`
+		fs.renameSync(oldFilePath, newFilePath)
+		metadata.file_name = maybeTheme.file_name
+		metadata.message_id = maybeTheme.message_id
+	}
+
+	await saveOrUpdateTheme(metadata)
 	await initiateApproval(metadata)
 }
 

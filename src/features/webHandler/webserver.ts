@@ -116,9 +116,9 @@ export function expressServer(secret: string) {
                 return res.status(400).json({message: 'Only .zip files are allowed'});
             }
 
-            res.status(200).json({message: 'File uploaded successfully'});
             handleUploaded(req.file.filename).then(r => {
                 //TODO: Add some feedback
+                res.status(200).json({message: 'File uploaded successfully'});
             });
         } else {
             console.error("Error: Bearer Token mismatch");

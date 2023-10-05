@@ -1,10 +1,8 @@
 import {MetadataColor, ThemeMetadata} from "../features/themesHandler/handleUploaded";
 import * as Sequelize from "sequelize";
 import {ApprovalStates} from "../features/themesHandler/approvalHandler";
-import * as trace_events from "trace_events";
-import {ARRAY, DataTypes, Model, STRING, where} from "sequelize";
+import {Model} from "sequelize";
 import {channelSafeFetchMessage, clientUtils, getHardcodedIDs, guildUtils} from "../globals/utils";
-import {client} from "../main";
 import {TextChannel} from "discord.js";
 
 const sequelize = new Sequelize.Sequelize(
@@ -26,7 +24,7 @@ const sequelize = new Sequelize.Sequelize(
  * @param {ThemeMetadata} metadata - The metadata object for the theme.
  * @return {void}
  */
-export async function uploadTheme(metadata: ThemeMetadata): Promise<boolean> {
+export async function saveOrUpdateTheme(metadata: ThemeMetadata): Promise<boolean> {
 	let savableMetaData = {
 		file_name: metadata.file_name,
 		file_id: metadata.file_id,
@@ -39,14 +37,25 @@ export async function uploadTheme(metadata: ThemeMetadata): Promise<boolean> {
 		alpha: metadata.color.alpha,
 		icon: metadata.icon,
 	} as SavableMetadata
-	try {
-		await ThemeTags.create(savableMetaData as any)
-		await ThemeTags.sync()
-		return true;
-	} catch (error){
-		console.error(error)
-		return false
+
+	const tryTheme = await getThemeFromID(metadata.file_id)
+
+	if (tryTheme != undefined){
+		console.log("Theme already exists, updating")
+		await updateThemeWithID(metadata.file_id, savableMetaData)
+		return true
+	} else {
+		try {
+			await ThemeTags.create(savableMetaData as any)
+			await ThemeTags.sync()
+			return true;
+		} catch (error){
+			console.error(error)
+			return false
+		}
 	}
+
+
 }
 
 /**
@@ -74,12 +83,24 @@ export async function getThemeByMessageID(messageID: string){
 }
 
 /**
- * Retrieves a theme from its ID.
+ * Retrieves the message ID associated with a theme ID.
  *
- * @param {string} id - The ID of the theme to retrieve.
- * @returns {Promise<Theme>} - A Promise that resolves to the retrieved theme.
+ * @param {string} id - The ID of the theme.
+ * @returns {Promise<string>} The message ID associated with the theme ID.
  */
-export async function getThemeFromID(id: string) {
+export async function getMessageIdByThemeID(id: string){
+	let themeTag = await ThemeTags.findOne({where: {file_id: id}});
+	return themeTag?.get("message_id") as string
+}
+
+/**
+ * Retrieves theme metadata from the database based on the provided ID.
+ *
+ * @param {string} id - The ID of the theme.
+ * @return {Promise<ThemeMetadata | undefined>} - A Promise that resolves with the theme metadata
+ * if found, or undefined otherwise.
+ */
+export async function getThemeFromID(id: string): Promise<ThemeMetadata | undefined> {
 	let themeTag = await ThemeTags.findOne({where: {file_id: id}});
 	return themeFromTags(themeTag)
 }

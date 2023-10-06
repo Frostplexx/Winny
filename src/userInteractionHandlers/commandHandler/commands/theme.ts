@@ -14,6 +14,10 @@ import fs, { readFileSync, writeFileSync } from 'fs';
 import JSZip from 'jszip';
 import axios from "axios"
 import { v4 as uuidv4 } from 'uuid';
+import {writeFile} from "fs-extra";
+import path from "path";
+import {cacheFolder} from "../../../globals/constants";
+import {handleUploaded} from "../../../features/themesHandler/handleUploaded";
 
 export default new SlashCommand({
 	//______SLASH COMMAND OPTIONS_________
@@ -21,24 +25,16 @@ export default new SlashCommand({
 		.setName('theme')
 		.addSubcommand((subcommand) =>
 			subcommand
-				.setName("delete")
-				.setDescription("Delete a theme")
-				.addStringOption((o) =>
-					o.setName("id").setRequired(true).setDescription("The theme ID").setDescriptionLocalizations({
-						de: "Die Theme ID",
-					})
-				)
+				.setName("submit")
+				.setDescription("Submit a theme for review")
+				.addAttachmentOption( a => (
+					a
+						.setName("theme")
+						.setDescription("your theme file")
+						.setRequired(true)
+				))
 		)
 		.addSubcommand((subcommand) =>
-			subcommand
-				.setName("info")
-				.setDescription("Get info of a Theme")
-				.addStringOption((o) =>
-					o.setName("id").setRequired(true).setDescription("The theme ID").setDescriptionLocalizations({
-						de: "Die Theme ID",
-					})
-				)
-		).addSubcommand((subcommand) =>
 			subcommand
 				.setName("fix")
 				.setDescription("This command tries to fix any broken Themes")
@@ -54,11 +50,8 @@ export default new SlashCommand({
 	async execute(interaction): Promise<void> {
 		const subcommand = interaction.options.getSubcommand();
 		switch (subcommand) {
-			case "delete":
-				await deleteThemeCommand(interaction)
-				break
-			case "info":
-				await infoThemeCommand(interaction)
+			case "submit":
+				await submitThemeCommand(interaction)
 				break
 			case "fix":
 				await fixThemeCommand(interaction)
@@ -165,21 +158,36 @@ interface SpecialCases {
 	[key: string]: string[];
 }
 
-/**
- * Deletes a theme command.
- *
- * @param {ChatInputCommandInteraction} interaction - The interaction object representing the chat input command.
- * @return {Promise<void>} - A promise that resolves when the delete operation is complete.
- */
-async function deleteThemeCommand(interaction: ChatInputCommandInteraction): Promise<void> {
-	await interaction.reply({content: "Not implemented", ephemeral: true})
-}
 
 /**
  * Displays information about the theme command.
  * @param {ChatInputCommandInteraction} interaction - The interaction object.
  * @return {Promise<void>} - A Promise that resolves when the operation is complete.
  */
-async function infoThemeCommand(interaction: ChatInputCommandInteraction): Promise<void> {
-	await interaction.reply({content: "Not implemented", ephemeral: true})
+async function submitThemeCommand(interaction: ChatInputCommandInteraction): Promise<void> {
+	const themeFile = interaction.options.getAttachment('theme');
+
+	if (!themeFile) {
+		await interaction.reply("No theme file provided");
+		return;
+	}
+
+	const zip = new JSZip();
+	const fileName = uuidv4()
+
+
+	// Get the data from the URL
+	const response = await axios.get(themeFile.url, { responseType: 'arraybuffer' });
+	const data = response.data;
+
+	// Load the data to a zip file
+	await zip.loadAsync(data);
+
+	// Generate the content as a node buffer
+	const content = await zip.generateAsync({ type:"nodebuffer" });
+
+	// Save the zip file in ../../cache
+	await writeFile(`${cacheFolder}/${fileName}.zip`, content);
+	await interaction.reply({ content: "Theme has been submitted!", ephemeral: true});
+	await handleUploaded(fileName + ".zip");
 }

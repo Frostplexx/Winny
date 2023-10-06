@@ -33,9 +33,9 @@ export function getHardcodedIDs() {
 	const data = fs.readFileSync(channelsPath, 'utf-8');
 	const channels: Channels = JSON.parse(data);
 
-	const {guildID, channelID} = channels;
-	console.info(`Guild ID: ${guildID}, Channel ID: ${channelID}`);
-	return {guildID, channelID};
+	const {guildID, channelID, themeApprovalID} = channels;
+	console.info(`Guild ID: ${guildID}, Channel ID: ${channelID}, ThemeChannel ID: ${themeApprovalID}`);
+	return {guildID, channelID, themeApprovalID} as Channels;
 }
 
 /**
@@ -45,7 +45,8 @@ export function getHardcodedIDs() {
  */
 export interface Channels {
 	guildID: string,
-	channelID: string
+	channelID: string,
+	themeApprovalID: string
 }
 
 //client related functions

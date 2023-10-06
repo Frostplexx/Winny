@@ -3,7 +3,7 @@ import fs from 'fs';
 import {cacheFolder} from "../../globals/constants";
 import path from "path";
 import * as util from "util";
-import {ApprovalStates, initiateApproval} from "./approvalHandler";
+import {ApprovalStates, approveUpdate, initiateApproval} from "./approvalHandler";
 import {getThemeFromID, saveOrUpdateTheme} from "../../database/databaseHandler";
 import {WinstonThemePreview} from "../svgEditor";
 
@@ -31,7 +31,11 @@ export const handleUploaded = async (filename: string): Promise<void> => {
 	}
 
 	await saveOrUpdateTheme(metadata)
-	await initiateApproval(metadata)
+	if(maybeTheme){
+		await approveUpdate(metadata)
+	} else {
+		await initiateApproval(metadata)
+	}
 }
 
 /**

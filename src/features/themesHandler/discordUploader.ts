@@ -115,12 +115,12 @@ export function generateEmbed(metadata: ThemeMetadata): EmbedBuilder[] {
 			.setAuthor({ name: metadata.theme_author})
 			.setThumbnail("https://raw.githubusercontent.com/Kinark/winston/main/winston/Assets.xcassets/AppIcon.appiconset/Frame%207-1024.png")
 			.setDescription(metadata.theme_description == "" ? "No description" : metadata.theme_description)
-			.setImage("attachment://light-" + metadata.file_id + ".png")
+			.setImage("attachment://0-light-" + metadata.file_id + ".png")
 			.setTimestamp()
 			.setFooter({ text: 'Theme ID: ' + metadata.file_id}),
 		new EmbedBuilder()
 			.setURL("https://winston.cafe") //needed to combine embeds: https://www.reddit.com/r/discordapp/comments/raz4kl/finally_a_way_to_display_multiple_images_in_an/
-			.setImage("attachment://dark-" + metadata.file_id + ".png")
+			.setImage("attachment://0-dark-" + metadata.file_id + ".png")
 	]
 }
 

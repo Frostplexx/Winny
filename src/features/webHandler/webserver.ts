@@ -117,7 +117,6 @@ export function expressServer(secret: string) {
             }
 
             handleUploaded(req.file.filename).then(() => {
-                //TODO: Add some feedback
                 res.status(200).json({message: 'File uploaded successfully'});
             });
         } else {

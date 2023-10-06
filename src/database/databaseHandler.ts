@@ -1,7 +1,7 @@
 import {MetadataColor, ThemeMetadata} from "../features/themesHandler/handleUploaded";
 import * as Sequelize from "sequelize";
 import {ApprovalStates} from "../features/themesHandler/approvalHandler";
-import {Model} from "sequelize";
+import {Model, Op} from "sequelize";
 import {channelSafeFetchMessage, clientUtils, getHardcodedIDs, guildUtils} from "../globals/utils";
 import {TextChannel} from "discord.js";
 
@@ -88,7 +88,7 @@ export async function getThemeByMessageID(messageID: string){
  * @param {string} id - The ID of the theme.
  * @returns {Promise<string>} The message ID associated with the theme ID.
  */
-export async function getMessageIdByThemeID(id: string){
+export async function getMessageIdByThemeID(id: string): Promise<string>{
 	let themeTag = await ThemeTags.findOne({where: {file_id: id}});
 	return themeTag?.get("message_id") as string
 }
@@ -103,6 +103,23 @@ export async function getMessageIdByThemeID(id: string){
 export async function getThemeFromID(id: string): Promise<ThemeMetadata | undefined> {
 	let themeTag = await ThemeTags.findOne({where: {file_id: id}});
 	return themeFromTags(themeTag)
+}
+
+/**
+ * Retrieves themes metadata matching a given name.
+ *
+ * @param {string} name - The name to search for.
+ * @returns {Promise<ThemeMetadata[]>} - A promise that resolves to an array of theme metadata objects.
+ */
+export async function getThemesFromName(name: string): Promise<ThemeMetadata[]> {
+	let themesTags = await ThemeTags.findAll({
+		where: { theme_name: { [Op.like]: '%' + name + '%' } }
+	});
+	let themes: ThemeMetadata[] = [];
+	for (const theme of themesTags) {
+		themes.push(<ThemeMetadata>themeFromTags(theme));
+	}
+	return themes;
 }
 
 /**

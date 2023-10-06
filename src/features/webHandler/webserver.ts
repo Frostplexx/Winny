@@ -8,14 +8,14 @@ import {cacheFolder} from "../../globals/constants";
 import {
     deleteThemeWithID,
     getAllThemes,
-    getThemeFromID, getThemeStatus,
+    getThemeFromID, getThemesFromName, getThemeStatus,
     SavableMetadata,
     updateThemeWithID
 } from "../../database/databaseHandler";
 import ws from "ws";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import {getDownloadURL} from "./S3Buckets/getDownloadableURL";
+import {getDownloadURL, getPreviewURLsFromS3} from "./S3Buckets/getDownloadableURL";
 import {streamS3ObjectToResponse} from "./S3Buckets/getFileStream";
 
 //minimal express server
@@ -36,7 +36,7 @@ export function expressServer(secret: string) {
     app.set('trust proxy', 1)
     app.use(express.json());
     app.use(cors());
-    const server = app.listen(PORT, () => console.log(`Now listening on port ${PORT} 🚀`));
+    app.listen(PORT, () => console.log(`Now listening on port ${PORT} 🚀`));
 
     // setting up disk storage
     const storage = multer.diskStorage({
@@ -116,7 +116,7 @@ export function expressServer(secret: string) {
                 return res.status(400).json({message: 'Only .zip files are allowed'});
             }
 
-            handleUploaded(req.file.filename).then(r => {
+            handleUploaded(req.file.filename).then(() => {
                 //TODO: Add some feedback
                 res.status(200).json({message: 'File uploaded successfully'});
             });
@@ -155,6 +155,22 @@ export function expressServer(secret: string) {
             //Handle got message
             let id = req.params.themeID
             let theme = await getThemeFromID(id)
+            res.status(200).json(theme);
+        } else {
+            console.error("Error: Bearer Token mismatch");
+            res.sendStatus(403);
+        }
+    });
+
+    app.get("/themes/name/:name", async (req: any, res: any) => {
+        //get the campaign channel form my server
+        if (
+            req.headers.authorization.split(" ")[0] == "Bearer" &&
+            req.headers.authorization.split(" ")[1] == secret
+        ) {
+            //Handle got message
+            let name = req.params.name
+            let theme = await getThemesFromName(name)
             res.status(200).json(theme);
         } else {
             console.error("Error: Bearer Token mismatch");
@@ -244,6 +260,20 @@ export function expressServer(secret: string) {
                 console.error("Error streaming the file from S3.", e);
                 res.sendStatus(500);
             }
+        } else {
+            console.error("Error: Bearer Token mismatch");
+            res.sendStatus(403);
+        }
+    });
+
+    app.get("/themes/previews/:themeID", async (req: any, res: any) => {
+        if (
+            req.headers.authorization.split(" ")[0] == "Bearer" &&
+            req.headers.authorization.split(" ")[1] == secret
+        ) {
+           let id = req.params.themeID;
+           const previews = await getPreviewURLsFromS3(id)
+           res.status(200).json({previews: previews});
         } else {
             console.error("Error: Bearer Token mismatch");
             res.sendStatus(403);

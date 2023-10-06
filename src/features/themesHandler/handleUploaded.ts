@@ -70,7 +70,7 @@ async function extractThemeMetadata(filename: string, extractPath: string): Prom
 					file_id: jsonContent.id || '',
 					theme_name: jsonContent.metadata.name || '',
 					theme_author: jsonContent.metadata.author || '',
-					theme_description: jsonContent.description || '',
+					theme_description: jsonContent.metadata.description || '',
 					message_id: undefined,
 					attachment_url: undefined,
 					approval_state: ApprovalStates.PENDING,

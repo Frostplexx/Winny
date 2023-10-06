@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
+import { PutObjectCommand} from "@aws-sdk/client-s3";
 import { promises as fs } from "fs";
 import { config } from 'dotenv';
 config();
@@ -30,6 +30,7 @@ export async function uploadToBucket(themePath: string, lightImages: string[], d
 
 		// Upload light images
 		for(let imagePath of lightImages) {
+			console.log(lightImages)
 			let imageData = await fs.readFile(imagePath);
 			uploadParams = {
 				Bucket: process.env.S3_BUCKET_NAME!,
@@ -43,6 +44,7 @@ export async function uploadToBucket(themePath: string, lightImages: string[], d
 
 		// Upload dark images
 		for(let imagePath of darkImages) {
+			console.log(darkImages)
 			let imageData = await fs.readFile(imagePath);
 			uploadParams = {
 				Bucket: process.env.S3_BUCKET_NAME!,

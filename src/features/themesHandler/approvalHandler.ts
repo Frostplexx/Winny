@@ -1,11 +1,9 @@
 import {ThemeMetadata} from "./handleUploaded";
 import {clientUtils} from "../../globals/utils";
 import {generateEmbed, uploadThemeToDiscord} from "./discordUploader";
-import {ButtonBuilder, ButtonInteraction, ButtonStyle, User} from "discord.js";
+import {ButtonInteraction, ButtonStyle} from "discord.js";
 import {SimpleButton} from "../../userInteractionHandlers/buttonHandler/simpleButton";
 import {ActionRowBuilder} from "@discordjs/builders";
-import {Button} from "../../userInteractionHandlers/buttonHandler/button";
-import {disableMsgButtonIndex} from "../../userInteractionHandlers/buttonHandler/buttons.util";
 import {updateThemeWithID} from "../../database/databaseHandler";
 
 export async function initiateApproval(metadata: ThemeMetadata) {
@@ -35,8 +33,6 @@ export async function initiateApproval(metadata: ThemeMetadata) {
 }
 
 async function approveTheme(interaction: ButtonInteraction, btnEvent: SimpleButton, data: ThemeMetadata | null) {
-	console.log("Approve Theme")
-	console.log(data)
 	await interaction.deferUpdate()
 	await interaction.editReply({content: "Theme approved", components: []})
 	data = await uploadThemeToDiscord(data)

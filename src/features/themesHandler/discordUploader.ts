@@ -13,7 +13,7 @@ import {
 import {cacheFolder} from "../../globals/constants";
 import {getThemePreviewImage} from "../svgEditor";
 import {uploadToBucket} from "../webHandler/S3Buckets/uploadToBucket";
-import {getMessageIdByThemeID, getThemeFromID} from "../../database/databaseHandler";
+import {getMessageIdByThemeID} from "../../database/databaseHandler";
 
 /**
  * Uploads a theme to Discord.
@@ -45,8 +45,12 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 	const messageID = metadata.message_id || await getMessageIdByThemeID(metadata.file_id)
 
 	//upload to S3 storage
-	await uploadToBucket(filePath, previews.filter( p => {p.includes("light")}), previews.filter( p => {p.includes("dark")}))
-
+	console.log("Previews: ")
+	await uploadToBucket(
+		filePath,
+		previews.filter(p => p.toLowerCase().includes("light")),
+		previews.filter(p => p.toLowerCase().includes("dark"))
+	);
 	const button = new ButtonBuilder()
 		.setLabel("Download Theme")
 		.setEmoji("⬇️")

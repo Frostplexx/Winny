@@ -82,7 +82,7 @@ async function extractThemeMetadata(filename: string, extractPath: string): Prom
 					themeColorsLight: {
 						background: "#" + jsonContent.posts.bg.color._0.light.hex,
 						accentColor: "#" + jsonContent.general.accentColor.light.hex,
-						tabBarBackground: "#" + jsonContent.general.tabBarBG.color.light.hex,
+						tabBarBackground: jsonContent.general.tabBarBG.blurry ? "#" + jsonContent.posts.bg.color._0.light.hex : "#" + jsonContent.general.tabBarBG.color.light.hex,
 						subredditPillBackground: "#CCE4FF",
 						divider: jsonContent.lists.dividersColors.light.hex,
 						tabBarInactiveColor: "#A1A1A1",
@@ -93,7 +93,7 @@ async function extractThemeMetadata(filename: string, extractPath: string): Prom
 					themeColorsDark: {
 						background: "#" + jsonContent.posts.bg.color._0.dark.hex,
 						accentColor: "#" + jsonContent.general.accentColor.dark.hex,
-						tabBarBackground: jsonContent.general.tabBarBG.color.dark.hex.toUpperCase() == "FFFFFF" ? "#" + jsonContent.posts.bg.color._0.dark.hex : "#" + jsonContent.general.tabBarBG.color.dark.hex,
+						tabBarBackground: jsonContent.general.tabBarBG.color.dark.hex.toUpperCase() == "FFFFFF" || jsonContent.general.tabBarBG.blurry ? "#" + jsonContent.posts.bg.color._0.dark.hex : "#" + jsonContent.general.tabBarBG.color.dark.hex,
 						subredditPillBackground: "#CCE4FF",
 						divider: jsonContent.lists.dividersColors.dark.hex,
 						tabBarInactiveColor: "#A1A1A1",

@@ -6,6 +6,7 @@ import {clearCache} from "./globals/utils";
 import {ThemeTags} from "./database/databaseHandler";
 import dotenv from "dotenv";
 import {ensureFilesExist} from "./globals/startup";
+import {loadButtons} from "./userInteractionHandlers/buttonHandler/registerButtons";
 
 dotenv.config({ path: "./.env" });
 // Create a new client instance
@@ -26,6 +27,9 @@ export const client = Object.assign(
 );
 
 async function init() {
+	await loadButtons()
+	loadEvents(client);
+	await loadButtons()
 	// await ensureFilesExist();
 	clearCache();
 	await ThemeTags.sync();
@@ -36,7 +40,6 @@ async function init() {
 	await client.login(process.env.TOKEN);
 
 	console.log("Logged in as " + client.user!.tag);
-	loadEvents(client);
 	client.user?.setPresence({
 		status: "online",
 		activities: [{ name: `/help | Version ${process.env.npm_package_version}` }],

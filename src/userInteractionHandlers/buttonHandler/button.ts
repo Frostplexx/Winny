@@ -1,6 +1,5 @@
 /* eslint-disable no-shadow */
 import {ButtonBuilder, ButtonInteraction} from "discord.js";
-import { ApprovalEventData } from "./buttonEvents/sendApproval";
 import {generateTimeBasedUUID} from "../../globals/security";
 
 /**
@@ -14,7 +13,7 @@ import {generateTimeBasedUUID} from "../../globals/security";
  */
 export class Button {
 	msgBtn: ButtonBuilder;
-	data: any | ApprovalEventData;
+	data: any;
 	eventname: ExBtnEvent;
 	id: string;
 	customId: string | null;
@@ -28,7 +27,7 @@ export class Button {
 					campaignId,
 				}: {
 		msgBtn: ButtonBuilder
-		data: ApprovalEventData | any;
+		data: any;
 		eventname: ExBtnEvent;
 		campaignId?: string;
 	});
@@ -103,12 +102,13 @@ export interface ButtonEvent {
 }
 
 export enum ExBtnEvent {
-	SEND_APPROVAL = "sendApproval",
+	BUG_REPORT = "bugReport",
+	F_REQUEST = "featureRequest"
 }
 
 export type ButtonData = {
 	msgBtn: ButtonBuilder;
-	data: ApprovalEventData | any;
+	data: any;
 	eventname: ExBtnEvent;
 	id: string;
 	customId: string | null;
@@ -117,6 +117,6 @@ export type ButtonData = {
 
 export type genBtnType = {
 	msgBtn: ButtonBuilder;
-	data: ApprovalEventData | any;
+	data: any;
 	eventname: ExBtnEvent;
 };

@@ -1,12 +1,12 @@
 [
   {
     "selectOpt": {
-      "title": "Coming Soon",
-      "description": "coming soon?",
-      "value": "soon"
+      "title": "Theme Store",
+      "description": "Help Page for the theme store",
+      "value": "themes"
     },
     "messageOpt": {
-      "content": "Theres something mysterious about this place...",
+      "content": "Winston now includes a theme store! Go to Settings -> Appearance -> Theme Store or to download many awesome themes. You can find the same themes on this server in the <#1156879859667177573> channel. If you want to upload a theme of your own please do `/theme submit` in this discord server to submit your theme for review.",
       "ephemeral": true
     }
   }

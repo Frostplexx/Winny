@@ -140,9 +140,9 @@ class ExecutableButton extends Button {
 			buttonEvents.get(button.eventname) ??
 			(() => {
 				throw Error(
-					"Could not create ExecutableButton: No ButtonEvent matching eventname found!"
+					"Could not create ExecutableButton: No ButtonEvent matching eventname found! " + button.eventname
 				);
-			})();
+ 			})();
 	}
 	execute(interaction: ButtonInteraction): void {
 		this.btnEvent.execute(interaction, this, this.data);

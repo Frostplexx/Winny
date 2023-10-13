@@ -7,7 +7,8 @@
     "build": "tsc",
     "start": "ts-node ./src/main.ts",
     "dev": "tsnd --respawn --inspect -- ./src/main.ts",
-    "deploy": "pm2 deploy production"
+    "deploy": "pm2 deploy production",
+    "pm2": "pm2 start run-ts.sh --name Winny"
   },
   "author": "Frostplexx",
   "license": "",
@@ -19,7 +20,7 @@
     "@types/multer": "^1.4.7",
     "cors": "^2.8.5",
     "discord.js": "^14.13.0",
-    "dotenv": "^16.3.1",
+   "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-rate-limit": "^7.0.2",
     "fs-extra": "^11.1.1",

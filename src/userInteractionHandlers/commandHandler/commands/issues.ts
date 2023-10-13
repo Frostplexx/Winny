@@ -8,6 +8,8 @@ import {
 import SlashCommand from "../commandTypes/slashCommand";
 import {ModalWrapper} from "../../modalHandler/modal";
 import {GithubAPI, IssueObject} from "../../../features/webHandler/githubAPI";
+import {label} from "../../../features/autoLabeler/bayes";
+import {autoLabeler} from "../../../globals/constants";
 
 export default new SlashCommand({
 	//______SLASH COMMAND OPTIONS_________
@@ -158,7 +160,7 @@ export async function createBugCommand(interaction: ChatInputCommandInteraction)
 	await interaction.showModal(modal)
 }
 
-async function uploadFeatureToGithub(interaction: ModalSubmitInteraction, btnEvent: ModalWrapper, data: any) {
+async function uploadFeatureToGithub(interaction: ModalSubmitInteraction) {
 	const title = interaction.fields.getTextInputValue("frtitle")
 	const featuredesc = interaction.fields.getTextInputValue("featuredesc")
 	const solution = interaction.fields.getTextInputValue("solution")
@@ -168,7 +170,7 @@ async function uploadFeatureToGithub(interaction: ModalSubmitInteraction, btnEve
 		owner: "lo-cafe",
 		repo: "winston",
 		title: "[FR] " + title,
-		labels: ["enhancement"],
+		labels: ["feature/enhancement"],
 		body: "**Is your feature request related to a problem? Please describe.**\n" +
 			featuredesc +
 			"\n\n" +
@@ -181,6 +183,10 @@ async function uploadFeatureToGithub(interaction: ModalSubmitInteraction, btnEve
 			"**Additional context**\n" +
 			context
 	}
+	const labels = label(issuesDetails.title + " " + issuesDetails.body)
+	if(autoLabeler){
+		issuesDetails.labels = labels
+	}
 	const success = await GithubAPI.createIssue(issuesDetails)
 	if(success){
 		await interaction.reply({content: "Issue Successfully submitted", ephemeral: true})
@@ -189,7 +195,7 @@ async function uploadFeatureToGithub(interaction: ModalSubmitInteraction, btnEve
 	}
 }
 
-async function uploadBugToGithub(interaction: ModalSubmitInteraction, btnEvent: ModalWrapper, data: any) {
+async function uploadBugToGithub(interaction: ModalSubmitInteraction) {
 	const title = interaction.fields.getTextInputValue("name")
 	const bugdesc = interaction.fields.getTextInputValue("bugdesc")
 	const steps = interaction.fields.getTextInputValue("steps")
@@ -199,7 +205,7 @@ async function uploadBugToGithub(interaction: ModalSubmitInteraction, btnEvent: 
 		owner: "lo-cafe",
 		repo: "winston",
 		title: "[Bug] " + title,
-		labels: ["bug"],
+		labels: ["bug/fix"],
 		body: "**Describe the bug**\n" +
 			bugdesc +
 			"\n\n" +
@@ -212,6 +218,10 @@ async function uploadBugToGithub(interaction: ModalSubmitInteraction, btnEvent: 
 			"\n\n" +
 			"**Device (please complete the following information):**\n" +
 			osinfo
+	}
+	const labels = label(issuesDetails.title + " " + issuesDetails.body);
+	if(autoLabeler){
+		issuesDetails.labels = labels
 	}
 	const success = await GithubAPI.createIssue(issuesDetails)
 	if(success){

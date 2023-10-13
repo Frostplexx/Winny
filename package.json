@@ -1,6 +1,6 @@
 {
   "name": "winny",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Theme Manager bot for Winston",
   "main": "main.js",
   "scripts": {

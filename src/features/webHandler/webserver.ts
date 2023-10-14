@@ -278,4 +278,8 @@ export function expressServer(secret: string) {
             res.sendStatus(403);
         }
     });
+
+    app.get("/ping", async  (req: any, res: any) => {
+        res.sendStatus(200)
+    })
 }

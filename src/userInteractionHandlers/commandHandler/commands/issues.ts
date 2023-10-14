@@ -183,10 +183,6 @@ async function uploadFeatureToGithub(interaction: ModalSubmitInteraction) {
 			"**Additional context**\n" +
 			context
 	}
-	const labels = label(issuesDetails.title + " " + issuesDetails.body)
-	if(autoLabeler){
-		issuesDetails.labels = labels
-	}
 	const success = await GithubAPI.createIssue(issuesDetails)
 	if(success){
 		await interaction.reply({content: "Issue Successfully submitted", ephemeral: true})

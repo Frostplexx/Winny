@@ -181,7 +181,9 @@ async function uploadFeatureToGithub(interaction: ModalSubmitInteraction) {
 			alternative +
 			"\n\n" +
 			"**Additional context**\n" +
-			context
+			context +
+			"\n\n---\n\n" +
+			"Posted by " + interaction.user.username
 	}
 	const success = await GithubAPI.createIssue(issuesDetails)
 	if(success){
@@ -213,7 +215,9 @@ async function uploadBugToGithub(interaction: ModalSubmitInteraction) {
 			expected +
 			"\n\n" +
 			"**Device (please complete the following information):**\n" +
-			osinfo
+			osinfo  +
+			"\n\n---\n\n" +
+			"Posted by " + interaction.user.username
 	}
 	const labels = label(issuesDetails.title + " " + issuesDetails.body);
 	if(autoLabeler){

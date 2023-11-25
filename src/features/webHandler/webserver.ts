@@ -17,6 +17,7 @@ import cors from "cors";
 import rateLimit from "express-rate-limit";
 import {getDownloadURL, getPreviewURLsFromS3} from "./S3Buckets/getDownloadableURL";
 import {streamS3ObjectToResponse} from "./S3Buckets/getFileStream";
+import {getCurrentAnnouncement} from "../announcements/getCurrentAnnouncement";
 
 //minimal express server
 const app = express();
@@ -281,5 +282,10 @@ export function expressServer(secret: string) {
 
     app.get("/ping", async  (req: any, res: any) => {
         res.sendStatus(200)
+    })
+
+    app.get("/api/v1/announcement", async  (req: any, res: any) => {
+        console.log("Got request for announcement")
+        res.status(200).json(getCurrentAnnouncement())
     })
 }

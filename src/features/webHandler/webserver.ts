@@ -2,9 +2,9 @@
 import express from "express";
 import multer from 'multer';
 import path from "path";
-import {generateTimeBasedUUID, getUserEligibility} from "../../globals/security";
-import {handleUploaded} from "../themesHandler/handleUploaded";
-import {cacheFolder} from "../../globals/constants";
+import { generateTimeBasedUUID, getUserEligibility } from "../../globals/security";
+import { handleUploaded } from "../themesHandler/handleUploaded";
+import { cacheFolder } from "../../globals/constants";
 import {
     deleteThemeWithID,
     getAllThemes,
@@ -15,14 +15,14 @@ import {
 import ws from "ws";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import {getDownloadURL, getPreviewURLsFromS3} from "./S3Buckets/getDownloadableURL";
-import {streamS3ObjectToResponse} from "./S3Buckets/getFileStream";
-import {getCurrentAnnouncement} from "../announcements/getCurrentAnnouncement";
+import { getDownloadURL, getPreviewURLsFromS3 } from "./S3Buckets/getDownloadableURL";
+import { streamS3ObjectToResponse } from "./S3Buckets/getFileStream";
+import { getCurrentAnnouncement } from "../announcements/getCurrentAnnouncement";
 
 //minimal express server
 const app = express();
 const PORT = 3000;
-export const wsServer = new ws.Server({noServer: true});
+export const wsServer = new ws.Server({ noServer: true });
 
 //start the express server on port 3000
 export function expressServer(secret: string) {
@@ -41,10 +41,10 @@ export function expressServer(secret: string) {
 
     // setting up disk storage
     const storage = multer.diskStorage({
-        destination: (req: any, file: Express.Multer.File, callback: (error: Error | null, destination: string) => void) => {
+        destination: (_req: any, _file: Express.Multer.File, callback: (error: Error | null, destination: string) => void) => {
             callback(null, cacheFolder)
         },
-        filename: (req: any, file: Express.Multer.File, callback: (error: Error | null , destination: string) => void) => {
+        filename: (_req: any, file: Express.Multer.File, callback: (error: Error | null, destination: string) => void) => {
             const ext = path.extname(file.originalname);
             const filePath = `${generateTimeBasedUUID()}${ext}`;
             callback(null, filePath);
@@ -109,16 +109,16 @@ export function expressServer(secret: string) {
             req.headers.authorization.split(" ")[1] == secret
         ) {
             if (!req.file) {
-                return res.status(400).json({message: 'No file uploaded'});
+                return res.status(400).json({ message: 'No file uploaded' });
             }
 
             const extension = path.extname(req.file.originalname);
             if (extension !== '.zip') {
-                return res.status(400).json({message: 'Only .zip files are allowed'});
+                return res.status(400).json({ message: 'Only .zip files are allowed' });
             }
 
             handleUploaded(req.file.filename).then(() => {
-                res.status(200).json({message: 'File uploaded successfully'});
+                res.status(200).json({ message: 'File uploaded successfully' });
             });
         } else {
             console.error("Error: Bearer Token mismatch");
@@ -207,7 +207,7 @@ export function expressServer(secret: string) {
             //Handle got message
             let id = req.params.themeID
             let deleted = await deleteThemeWithID(id)
-            if(deleted) {
+            if (deleted) {
                 res.sendStatus(200)
             } else {
                 res.sendStatus(500)
@@ -230,7 +230,7 @@ export function expressServer(secret: string) {
 
             let updated = await updateThemeWithID(id, updateData);
 
-            if(updated) {
+            if (updated) {
                 res.sendStatus(200); // OK
             } else {
                 res.sendStatus(500); // Internal Server Error
@@ -271,20 +271,20 @@ export function expressServer(secret: string) {
             req.headers.authorization.split(" ")[0] == "Bearer" &&
             req.headers.authorization.split(" ")[1] == secret
         ) {
-           let id = req.params.themeID;
-           const previews = await getPreviewURLsFromS3(id)
-           res.status(200).json({previews: previews});
+            let id = req.params.themeID;
+            const previews = await getPreviewURLsFromS3(id)
+            res.status(200).json({ previews: previews });
         } else {
             console.error("Error: Bearer Token mismatch");
             res.sendStatus(403);
         }
     });
 
-    app.get("/ping", async  (req: any, res: any) => {
+    app.get("/ping", async (_req: any, res: any) => {
         res.sendStatus(200)
     })
 
-    app.get("/api/v1/announcement", async  (req: any, res: any) => {
+    app.get("/api/v1/announcement", async (_req: any, res: any) => {
         console.log("Got request for announcement")
         res.status(200).json(getCurrentAnnouncement())
     })

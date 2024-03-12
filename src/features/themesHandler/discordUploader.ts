@@ -19,9 +19,10 @@ import {getMessageIdByThemeID} from "../../database/databaseHandler";
  * Uploads a theme to Discord.
  *
  * @param {ThemeMetadata | null} metadata - The metadata of the theme to upload.
+ * @param messageIdOverride
  * @returns {Promise<ThemeMetadata | null>} - The updated metadata of the uploaded theme, or null if no metadata is provided.
  */
-export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Promise<ThemeMetadata | null> {
+export async function uploadThemeToDiscord(metadata: ThemeMetadata | null, messageIdOverride: string | undefined = ""): Promise<ThemeMetadata | null> {
 	if (metadata == null) {
 		return null;
 	}
@@ -41,7 +42,10 @@ export async function uploadThemeToDiscord(metadata: ThemeMetadata | null): Prom
 
 	await waitForFiles(previews);
 
-	//check if message already exists
+	//check if message already exists or if override is set
+	if(messageIdOverride != ""){
+		metadata.message_id = messageIdOverride
+	}
 	const messageID = metadata.message_id || await getMessageIdByThemeID(metadata.file_id)
 
 	//upload to S3 storage

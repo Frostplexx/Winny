@@ -14,6 +14,7 @@ export const event: Event = {
 		// Dynamically handle slash commands
 		if (!interaction.isChatInputCommand()) return;
 		if (!client.commands.has(interaction.commandName)) return;
+		if (!interaction.guildId) return;
 
 		try {
 			const command: SlashCommand = client.commands.get(
@@ -28,7 +29,7 @@ export const event: Event = {
 					ephemeral: true,
 				});
 			} catch (error) {
-				interaction.followUp({
+				await interaction.reply({
 					content: "There was an error while executing this command!",
 					ephemeral: true,
 				});

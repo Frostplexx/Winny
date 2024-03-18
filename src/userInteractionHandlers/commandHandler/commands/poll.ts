@@ -134,9 +134,12 @@ async function createPoll(interaction: ModalSubmitInteraction) {
         // Prepare results
         const results: any = [];
         reaction.message.reactions.cache.forEach((reaction: any) => {
-            const percentage = ((reaction.count - 1) / totalVotes) * 100; // Subtract 1 to exclude bot's own reaction
+            let percentage = 0
+            if (totalVotes != 0) {
+                percentage = ((reaction.count - 1) / totalVotes) * 100; // Subtract 1 to exclude bot's own reaction
+            }
             const foundPollOption = pollOptions.find(option => option.emoji === reaction.emoji.name);
-            results.push(`${foundPollOption?.emoji} (${percentage ? 0 : percentage.toFixed(2)}%) - ${foundPollOption?.option}`);
+            results.push(`${foundPollOption?.emoji} (${percentage.toFixed(2)}%) - ${foundPollOption?.option}`);
         });
 
         // Update embed with results
@@ -147,7 +150,7 @@ async function createPoll(interaction: ModalSubmitInteraction) {
         }
 
         embed.setDescription(bodyWithEmojis);
-        embed.setFooter({ text: `Total votes: ${totalVotes} - Ends: ${endTimeString}` });
+        embed.setFooter({ text: `Total votes: ${totalVotes} - Ends: ${endTimeString} UTC` });
 
         // Assuming interaction is defined elsewhere
         interaction.editReply({ embeds: [embed] });

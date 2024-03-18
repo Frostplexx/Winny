@@ -152,6 +152,7 @@ async function createPoll(interaction: ModalSubmitInteraction) {
         embed.setDescription(bodyWithEmojis);
         embed.setFooter({ text: `Total votes: ${totalVotes} - Ends: ${endTimeString} UTC` });
 
+
         // Assuming interaction is defined elsewhere
         interaction.editReply({ embeds: [embed] });
     }

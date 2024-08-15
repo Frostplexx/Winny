@@ -1,1 +1,95 @@
-{"buttons":[]}
+{
+    "buttons": [
+      {
+	"msgBtn": {
+		"type": 2,
+		"emoji": {
+			"name": "🪲",
+			"animated": false
+		},
+		"label": "Bug Report",
+		"style": 1,
+		"custom_id": "91723714395207-c22138ee-4185-495f-8d6a-ff63c82a1355"
+	},
+	"data": "",
+	"eventname": "nn_bugReport",
+	"id": "91723714395207-c22138ee-4185-495f-8d6a-ff63c82a1355",
+	"customId": "91723714395207-c22138ee-4185-495f-8d6a-ff63c82a1355"
+},{
+	"msgBtn": {
+		"type": 2,
+		"emoji": {
+			"name": "🎁",
+			"animated": false
+		},
+		"label": "Feature Request",
+		"style": 1,
+		"custom_id": "91723714395208-963c0f75-4e12-419b-bfc6-b3e589ff0534"
+	},
+	"data": "",
+	"eventname": "nn_featureRequest",
+	"id": "91723714395208-963c0f75-4e12-419b-bfc6-b3e589ff0534",
+	"customId": "91723714395208-963c0f75-4e12-419b-bfc6-b3e589ff0534"
+},{
+	"msgBtn": {
+		"type": 2,
+		"emoji": {
+			"name": "🪲",
+			"animated": false
+		},
+		"label": "Bug Report",
+		"style": 1,
+		"custom_id": "91723714460125-1220119f-c953-424e-9343-9e14b96dd90b"
+	},
+	"data": "",
+	"eventname": "nn_bugReport",
+	"id": "91723714460125-1220119f-c953-424e-9343-9e14b96dd90b",
+	"customId": "91723714460125-1220119f-c953-424e-9343-9e14b96dd90b"
+},{
+	"msgBtn": {
+		"type": 2,
+		"emoji": {
+			"name": "🎁",
+			"animated": false
+		},
+		"label": "Feature Request",
+		"style": 1,
+		"custom_id": "91723714460126-ca52c6e4-599d-44a7-8e14-687081baaf8b"
+	},
+	"data": "",
+	"eventname": "nn_featureRequest",
+	"id": "91723714460126-ca52c6e4-599d-44a7-8e14-687081baaf8b",
+	"customId": "91723714460126-ca52c6e4-599d-44a7-8e14-687081baaf8b"
+},{
+	"msgBtn": {
+		"type": 2,
+		"emoji": {
+			"name": "🪲",
+			"animated": false
+		},
+		"label": "Bug Report",
+		"style": 1,
+		"custom_id": "91723714511432-521590f8-d3f6-4a6b-8636-2298351cf256"
+	},
+	"data": "",
+	"eventname": "bugReport",
+	"id": "91723714511432-521590f8-d3f6-4a6b-8636-2298351cf256",
+	"customId": "91723714511432-521590f8-d3f6-4a6b-8636-2298351cf256"
+},{
+	"msgBtn": {
+		"type": 2,
+		"emoji": {
+			"name": "🎁",
+			"animated": false
+		},
+		"label": "Feature Request",
+		"style": 1,
+		"custom_id": "91723714511433-09f43c5c-73e8-43fb-9036-8d076daec6ac"
+	},
+	"data": "",
+	"eventname": "featureRequest",
+	"id": "91723714511433-09f43c5c-73e8-43fb-9036-8d076daec6ac",
+	"customId": "91723714511433-09f43c5c-73e8-43fb-9036-8d076daec6ac"
+}
+    ]
+  }

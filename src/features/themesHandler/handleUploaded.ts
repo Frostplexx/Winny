@@ -6,7 +6,7 @@ import * as util from "util";
 import { ApprovalStates, approveUpdate, initiateApproval } from "./approvalHandler";
 import { getThemeFromID, overrideTheme, saveOrUpdateTheme, updateThemeWithID } from "../../database/databaseHandler";
 import { WinstonThemePreview } from "../svgEditor";
-import {uploadThemeToDiscord} from "./discordUploader";
+import { uploadThemeToDiscord } from "./discordUploader";
 
 /**
  * Handles uploaded file.
@@ -83,7 +83,7 @@ async function extractThemeMetadata(filename: string, extractPath: string): Prom
     try {
         await new Promise((resolve, reject) => {
             fs.createReadStream(filePath)
-                .pipe(unzipper.Extract({ path: extractPath }))
+                .pipe(unzipper.Extract({ path: extractPath }) as any)
                 .on('close', resolve)  // Change 'finish' to 'close'
                 .on('error', reject);
         });

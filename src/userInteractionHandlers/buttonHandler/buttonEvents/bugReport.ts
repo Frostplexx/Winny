@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {ButtonInteraction, ChatInputCommandInteraction, TextChannel} from "discord.js";
+import { ButtonInteraction, ChatInputCommandInteraction, TextChannel } from "discord.js";
 import { Button, ButtonEvent } from "../button";
-import {createBugCommand} from "../../commandHandler/commands/issues";
+import { createBugCommand, ServiceType } from "../../commandHandler/commands/issues";
 export const buttonEvent: ButtonEvent = {
-	name: "bugReport",
-	execute: execute,
+    name: "bugReport",
+    execute: execute,
 };
 
 async function execute(
-	interaction: ButtonInteraction,
-	btnEvent: Button,
-	data: any
+    interaction: ButtonInteraction,
+    btnEvent: Button,
+    data: any
 ) {
-	if (!interaction.isButton()) return;
-	await createBugCommand(interaction as unknown as ChatInputCommandInteraction)
+    if (!interaction.isButton()) return;
+    await createBugCommand(interaction as unknown as ChatInputCommandInteraction, ServiceType.WINSTON)
 
 }
 
